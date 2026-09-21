@@ -88,11 +88,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\C# projects\\business-management-system\\backend\\backend.csproj",
+      "projectUniqueName": "c:\\csharp project\\business-management-system\\backend\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "C:\\C# projects\\business-management-system\\backend\\backend.csproj",
+      "projectPath": "c:\\csharp project\\business-management-system\\backend\\backend.csproj",
       "packagesPath": "C:\\Users\\USER PC\\.nuget\\packages\\",
-      "outputPath": "C:\\C# projects\\business-management-system\\backend\\obj\\",
+      "outputPath": "c:\\csharp project\\business-management-system\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\USER PC\\AppData\\Roaming\\NuGet\\NuGet.Config"
