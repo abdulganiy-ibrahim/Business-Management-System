@@ -1,5 +1,6 @@
 'use client';
 
+import { supabase } from '@/lib/supabaseClient';
 import { useState } from "react"
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
@@ -30,7 +31,28 @@ export default function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
     e.preventDefault();
     setIsLoading(true);
 
-  }
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          name: formData.name, // stored as user metadata in Supabase
+        },
+        emailRedirectTo: `${window.location.origin}/signup`,
+      },
+    });
+
+    if (error) {
+      toast.error(error.message);
+      setIsLoading(false);
+      return;
+    }
+
+    toast.success('Account created! Check your email to verify.');
+    console.log('Session:', data.session); // temporary - so you can inspect the JWT shape
+
+    setIsLoading(false);
+  };
 
   return (
     <form
