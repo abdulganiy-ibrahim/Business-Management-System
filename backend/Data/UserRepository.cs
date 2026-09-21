@@ -12,7 +12,7 @@ public class UserRepository
     _connectionString = connectionString;
   }
 
-  public User? GetAll(Guid id)
+  public User? GetById(Guid id)
   {
     using var conn = new NpgsqlConnection(_connectionString);
     conn.Open();
