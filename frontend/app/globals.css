@@ -1,24 +1,111 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand: #0E6B57;
+  --brand-hover: #0A5646;
+  --brand-light: #12806A;
+  --brand-tint: #ECF6F2;
+  --brand-deep: #073B31;
+
+  --agent: #BA7517;
+  --agent-tint: #FAEEDA;
+  --agent-deep: #412402;
+
+  --bg: #FFFFFF;
+  --bg-subtle: #FAFAF8;
+  --bg-sunken: #F4F4F0;
+
+  --fg: #111111;
+  --fg-muted: #6B6B66;
+  --fg-subtle: #9A9A94;
+
+  --line: #E5E5E2;
+  --line-strong: #D6D6D1;
+
+  --ok: #4D7C0F;
+  --ok-tint: #F1F7E8;
+  --warn: #B45309;
+  --warn-tint: #FDF4E7;
+  --bad: #B42318;
+  --bad-tint: #FEF0EF;
 }
 
-@theme {
-  /* background colors */
-  --color-background: var(--background);
+.dark {
+  --brand: #2BA184;
+  --brand-hover: #35B896;
+  --brand-light: #4FC4A7;
+  --brand-tint: #0C2F27;
+  --brand-deep: #D3EBE3;
 
-  /* text color */
-  --color-foreground: var(--foreground);
+  --agent: #E0A340;
+  --agent-tint: #33240B;
+  --agent-deep: #FAEEDA;
 
-  /* font family */
+  --bg: #0F0F0E;
+  --bg-subtle: #171716;
+  --bg-sunken: #1F1F1D;
+
+  --fg: #F5F5F3;
+  --fg-muted: #A3A39C;
+  --fg-subtle: #6E6E68;
+
+  --line: #2A2A28;
+  --line-strong: #3A3A37;
+
+  --ok: #8BBF4D;
+  --ok-tint: #1C2910;
+  --warn: #E0A340;
+  --warn-tint: #33240B;
+  --bad: #E8756A;
+  --bad-tint: #341614;
+}
+
+@theme inline {
+  --color-primary: var(--brand);
+  --color-primary-hover: var(--brand-hover);
+  --color-primary-light: var(--brand-light);
+  --color-primary-tint: var(--brand-tint);
+  --color-primary-deep: var(--brand-deep);
+
+  --color-agent: var(--agent);
+  --color-agent-tint: var(--agent-tint);
+  --color-agent-deep: var(--agent-deep);
+
+  --color-background: var(--bg);
+  --color-surface: var(--bg-subtle);
+  --color-sunken: var(--bg-sunken);
+
+  --color-foreground: var(--fg);
+  --color-muted: var(--fg-muted);
+  --color-subtle: var(--fg-subtle);
+
+  --color-border: var(--line);
+  --color-border-strong: var(--line-strong);
+
+  --color-success: var(--ok);
+  --color-success-tint: var(--ok-tint);
+  --color-warning: var(--warn);
+  --color-warning-tint: var(--warn-tint);
+  --color-danger: var(--bad);
+  --color-danger-tint: var(--bad-tint);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Numeric columns align instead of wobbling */
+  table,
+  [data-numeric],
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
 }
