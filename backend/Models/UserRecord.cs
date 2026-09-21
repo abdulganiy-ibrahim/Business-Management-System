@@ -1,7 +1,10 @@
-using Microsoft.VisualBasic;
+namespace BusinessManagementApi.Models;
 
-namespace UserRecord.Model;
-
-public record CreateUser();
-
-public record User(Guid Id, string FirstName, string? LastName, string Email, DateTime CreatedAt, bool verified);
+public record User(
+    Guid Id,
+    string Email,
+    string? DisplayName,
+    string? Phone,
+    DateTime CreatedAt,
+    DateTime? LastSignInAt
+);
