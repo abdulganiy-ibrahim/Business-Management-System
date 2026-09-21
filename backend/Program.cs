@@ -1,8 +1,15 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// get database connection strings
+var connectionString = builder.Configuration.GetConnectionString("BMSDB")
+    ?? throw new InvalidOperationException("Connecting string 'BMSDB' not found");
 
+// Register ProductRepository with the DI Container
+
+
+// Add services to the container.
 builder.Services.AddControllers();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

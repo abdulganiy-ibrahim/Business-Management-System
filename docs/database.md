@@ -24,8 +24,7 @@ The `Users` table stores information about users who have accounts on the system
 | Column       | Type        | Constraints             |
 | ------------ | ----------- | ----------------------- |
 | `id`         | UUID        | PRIMARY KEY, NOT NULL   |
-| `first_name` | TEXT        | NOT NULL                |
-| `last_name`  | TEXT        | NOT NULL                |
+| `name`       | TEXT        | NOT NULL                |
 | `email`      | TEXT        | NOT NULL, UNIQUE        |
 | `created_at` | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | `verified`   | BOOLEAN     | NOT NULL, DEFAULT FALSE |
