@@ -16,26 +16,13 @@ public class BusinessService
 
   public BusinessRecord Create(Guid userId, CreateBusinessRecord newBusiness)
   {
-    var user = _userRepository.GetById(userId);
-
-    if (user is null)
-    {
-        throw new UnauthorizedAccessException("User does not exist.");
-    }
-
     return _businessRepository.Create(userId, newBusiness);
   }
 
   public BusinessRecord? GetByUserId(Guid userId)
   {
-    var user = _userRepository.GetById(userId);
 
-    if (user is null)
-    {
-      throw new UnauthorizedAccessException("User does not exist.");
-    }
-
-    var business = _businessRepository.GetByUserId(user.Id);
+    var business = _businessRepository.GetByUserId(userId);
 
     return business;
   }

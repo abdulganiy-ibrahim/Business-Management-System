@@ -20,21 +20,9 @@ public class BusinessController : ControllerBase
   [HttpPost]
   public IActionResult Create(CreateBusinessRecord newBusiness)
   {
-    var userIdClaim = User.FindFirst("sub")?.Value;
+    var user = (User)HttpContext.Items["CurrentUser"]!;
 
-    if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
-    {
-        return Unauthorized();
-    }
-
-    try
-    {
-        var business = _businessService.Create(userId, newBusiness);
-        return Ok(business);
-    }
-    catch (UnauthorizedAccessException ex)
-    {
-        return Unauthorized(ex.Message);
-    }
+    var business = _businessService.Create(user.Id, newBusiness);
+    return Ok(business);
   }
 }

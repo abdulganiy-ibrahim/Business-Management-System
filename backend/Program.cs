@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BusinessManagementApi.Data;
 using BusinessManagementApi.Services;
+using BusinessManagementApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +54,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Register Middleware.
+app.UseMiddleware<UserExistsMiddleware>();
 
 app.MapControllers();
 
