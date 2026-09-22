@@ -18,17 +18,19 @@ public class BusinessRepository
     conn.Open();
 
     using var cmd = new NpgsqlCommand(
-      "INSERT INTO businesses (user_id, business_name, business_category) VALUES (@userId, @businessName, @businessCategory) RETURNING id",
+      "INSERT INTO businesses (user_id, business_name, business_category, phone_number, slug) VALUES (@userId, @businessName, @businessCategory, @phoneNumber, @slug) RETURNING id",
       conn
     );
     
     cmd.Parameters.AddWithValue("userId", userId);
     cmd.Parameters.AddWithValue("businessName", newBusiness.Name);
     cmd.Parameters.AddWithValue("businessCategory", newBusiness.Category);
+    cmd.Parameters.AddWithValue("phoneNumber", newBusiness.PhoneNumber);
+    cmd.Parameters.AddWithValue("slug", newBusiness.Slug);
 
     var newId = (Guid)cmd.ExecuteScalar()!;
 
-    return new BusinessRecord(newId, userId, newBusiness.Name, newBusiness.Category);
+    return new BusinessRecord(newId, userId, newBusiness.Name, newBusiness.Category, newBusiness.PhoneNumber, newBusiness.Slug);
   }
 
   public BusinessRecord? GetByUserId(Guid userId)
@@ -37,7 +39,7 @@ public class BusinessRepository
     conn.Open();
 
     using var cmd = new NpgsqlCommand(
-      "SELECT id, user_id, business_name, business_category FROM businesses WHERE user_id = @user_id",
+      "SELECT id, user_id, business_name, business_category, phone_number, slug FROM businesses WHERE user_id = @user_id",
       conn
     );
     cmd.Parameters.AddWithValue("user_id", userId);
@@ -50,7 +52,9 @@ public class BusinessRepository
         reader.GetGuid(0),
         reader.GetGuid(1),
         reader.GetString(2),
-        reader.GetString(3)
+        reader.GetString(3),
+        reader.GetString(4),
+        reader.GetString(5)
       );
     }
 
