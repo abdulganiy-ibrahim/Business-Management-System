@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BusinessManagementApi.Data;
+using BusinessManagementApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("BMSDB")
     ?? throw new InvalidOperationException("Connecting string 'BMSDB' not found");
 
-// Register ProductRepository with the DI Container
+// Register Repositories with the DI Container
 builder.Services.AddScoped<UserRepository>(sp => new UserRepository(connectionString));
 builder.Services.AddScoped<BusinessRepository>(sp => new BusinessRepository(connectionString));
+
+// Register Services with the DI Container
+builder.Services.AddScoped<BusinessService>();
+builder.Services.AddScoped<UserService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
