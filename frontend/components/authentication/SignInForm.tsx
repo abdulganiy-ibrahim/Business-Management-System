@@ -3,7 +3,7 @@
 import { supabase } from '@/lib/supabaseClient';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -30,21 +30,31 @@ export default function SignInForm() {
     e.preventDefault();
     setIsLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: formData.email,
-      password: formData.password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
 
-    if (error) {
-      toast.error(error.message);
+      if (error) {
+        toast.error(error.message);
+        setIsLoading(false);
+        return;
+      }
+
+      toast.success('Logged in successfully!');
+      redirect('/dashboard');
+
+      
+    } catch (error) {
+
+    } finally {
       setIsLoading(false);
-      return;
+      setFormData({
+        email: '',
+        password: ''
+      });
     }
-
-    toast.success('Logged in successfully!');
-    console.log('Session:', data.session); // temporary - inspect the JWT here
-
-    setIsLoading(false);
   }
   
   return (
