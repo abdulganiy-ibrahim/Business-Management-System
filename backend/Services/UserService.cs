@@ -1,1 +1,6 @@
-namespace UserService.Services;
+namespace BusinessManagementApi.Services;
+
+public class UserService
+{
+  
+}
