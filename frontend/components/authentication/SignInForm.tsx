@@ -38,24 +38,18 @@ export default function SignInForm() {
 
       if (error) {
         toast.error(error.message);
-        setIsLoading(false);
         return;
       }
 
       toast.success('Logged in successfully!');
-      redirect('/dashboard');
-
-      
+      router.push('/dashboard');
     } catch (error) {
-
+      toast.error('Something went wrong. Please try again.');
+      console.error(error);
     } finally {
       setIsLoading(false);
-      setFormData({
-        email: '',
-        password: ''
-      });
     }
-  }
+  };
   
   return (
     <form
