@@ -1,4 +1,4 @@
-namespace BusinessManagementApi.Models;
+namespace BusinessManagementApi.Model;
 
 public record User(
     Guid Id,

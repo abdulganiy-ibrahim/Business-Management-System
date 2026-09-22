@@ -1,23 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --brand: #0E6B57;
-  --brand-hover: #0A5646;
-  --brand-light: #12806A;
-  --brand-tint: #ECF6F2;
-  --brand-deep: #073B31;
+  --brand: #1F6F5C;
+  --brand-hover: #195A4B;
+  --brand-light: #278C73;
+  --brand-tint: #EFF6F3;
+  --brand-deep: #0F3A30;
 
-  --agent: #BA7517;
-  --agent-tint: #FAEEDA;
-  --agent-deep: #412402;
+  --agent: #B8791C;
+  --agent-tint: #FBEEDA;
+  --agent-deep: #3D2601;
 
   --bg: #FFFFFF;
-  --bg-subtle: #FAFAF8;
-  --bg-sunken: #F4F4F0;
+  --bg-subtle: #F7F7F5;
+  --bg-sunken: #F1F1EE;
 
-  --fg: #111111;
-  --fg-muted: #6B6B66;
-  --fg-subtle: #9A9A94;
+  --fg: #14181A;
+  --fg-muted: #5B6462;
+  --fg-subtle: #9CA3A1;
 
   --line: #E5E5E2;
   --line-strong: #D6D6D1;
@@ -31,23 +31,23 @@
 }
 
 .dark {
-  --brand: #2BA184;
-  --brand-hover: #35B896;
-  --brand-light: #4FC4A7;
-  --brand-tint: #0C2F27;
-  --brand-deep: #D3EBE3;
+  --brand: #34A88C;
+  --brand-hover: #3EBFA0;
+  --brand-light: #5CCDB0;
+  --brand-tint: #0D2A23;
+  --brand-deep: #DCEEE8;
 
   --agent: #E0A340;
   --agent-tint: #33240B;
   --agent-deep: #FAEEDA;
 
-  --bg: #0F0F0E;
-  --bg-subtle: #171716;
-  --bg-sunken: #1F1F1D;
+  --bg: #14181A;
+  --bg-subtle: #1B1F20;
+  --bg-sunken: #22262A;
 
   --fg: #F5F5F3;
-  --fg-muted: #A3A39C;
-  --fg-subtle: #6E6E68;
+  --fg-muted: #A9AFAD;
+  --fg-subtle: #74797A;
 
   --line: #2A2A28;
   --line-strong: #3A3A37;
@@ -91,6 +91,10 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 @layer base {
