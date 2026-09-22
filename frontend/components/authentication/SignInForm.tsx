@@ -1,6 +1,6 @@
 'use client';
 
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabase/supabaseClient';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { redirect, useRouter } from 'next/navigation';
