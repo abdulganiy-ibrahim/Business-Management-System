@@ -19,7 +19,7 @@ public class BusinessRepository
     conn.Open();
 
     using var cmd = new NpgsqlCommand(
-      "SELECT slug FROM businesses WHERE slug = @slug",
+      "SELECT EXISTS(SELECT 1 FROM businesses WHERE slug = @slug)",
       conn
     );
   

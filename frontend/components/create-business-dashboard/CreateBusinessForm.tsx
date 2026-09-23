@@ -31,7 +31,7 @@ export default function CreateBusinessForm({ compact = false }: CreateBusinessFo
   const [values, setValues] = useState<BusinessFormValues>({
     name: "",
     category: "",
-    phone: "",
+    phoneNumber: "",
   });
   const [errors, setErrors] = useState<BusinessFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -47,10 +47,10 @@ export default function CreateBusinessForm({ compact = false }: CreateBusinessFo
     const next: BusinessFormErrors = {};
     if (!values.name.trim()) next.name = "Enter a business name";
     if (!values.category) next.category = "Choose a category";
-    if (!values.phone.trim()) {
-      next.phone = "Enter a phone number";
-    } else if (!/^[0-9+\-()\s]{7,}$/.test(values.phone.trim())) {
-      next.phone = "Enter a valid phone number";
+    if (!values.phoneNumber.trim()) {
+      next.phoneNumber = "Enter a phone number";
+    } else if (!/^[0-9+\-()\s]{7,}$/.test(values.phoneNumber.trim())) {
+      next.phoneNumber = "Enter a valid phone number";
     }
     return next;
   };
@@ -169,10 +169,10 @@ export default function CreateBusinessForm({ compact = false }: CreateBusinessFo
           <Input
             id="business-phone"
             type="tel"
-            value={values.phone}
-            onChange={handleChange("phone")}
+            value={values.phoneNumber}
+            onChange={handleChange("phoneNumber")}
             placeholder="+234 800 000 0000"
-            error={errors.phone}
+            error={errors.phoneNumber}
           />
         </div>
 

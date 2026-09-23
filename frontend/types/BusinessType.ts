@@ -3,12 +3,12 @@ export interface Business {
   userId: string;
   name: string;
   category: string;
-  phone: string;
+  phoneNumber: string;
   slug: string;
 }
 
 export interface BusinessFormValues {
   name: string;
   category: string;
-  phone: string;
+  phoneNumber: string;
 };

@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // get database connection strings
 var connectionString = builder.Configuration.GetConnectionString("BusinessManagementDB")
-    ?? throw new InvalidOperationException("Connecting string 'BMSDB' not found");
+    ?? throw new InvalidOperationException("Connecting string 'BusinessManagementDB' not found");
 
 // Register Repositories with the DI Container
 builder.Services.AddScoped<UserRepository>(sp => new UserRepository(connectionString));
@@ -40,6 +40,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.MapInboundClaims = false;
         options.Authority = "https://kayecsjjsjxhhtlaqavh.supabase.co/auth/v1";
         options.TokenValidationParameters = new TokenValidationParameters
         {

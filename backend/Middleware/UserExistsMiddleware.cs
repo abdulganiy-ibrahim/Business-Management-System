@@ -13,10 +13,11 @@ public class UserExistsMiddleware
 
   public async Task InvokeAsync(HttpContext context, UserRepository userRepository)
   {
-    Console.WriteLine($"Middleware hit. IsAuthenticated: {context.User.Identity?.IsAuthenticated}");
 
     if (context.User.Identity?.IsAuthenticated == true)
     {
+      Console.WriteLine($"Middleware hit. IsAuthenticated: {context.User.Identity?.IsAuthenticated}");
+
       var userIdClaim = context.User.FindFirst("sub")?.Value;
 
       if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
@@ -25,7 +26,7 @@ public class UserExistsMiddleware
           await context.Response.WriteAsync("Invalid token.");
           return;
       }
-      Console.WriteLine(userId);
+
       var user = userRepository.GetById(userId);
 
       if (user is null)
