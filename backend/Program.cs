@@ -8,7 +8,7 @@ using BusinessManagementApi.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // get database connection strings
-var connectionString = builder.Configuration.GetConnectionString("BMSDB")
+var connectionString = builder.Configuration.GetConnectionString("BusinessManagementDB")
     ?? throw new InvalidOperationException("Connecting string 'BMSDB' not found");
 
 // Register Repositories with the DI Container
