@@ -4,6 +4,7 @@ export interface Business {
   name: string;
   category: string;
   phone: string;
+  slug: string;
 }
 
 export interface BusinessFormValues {

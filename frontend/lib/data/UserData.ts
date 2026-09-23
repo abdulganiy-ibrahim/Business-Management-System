@@ -1,9 +1,9 @@
 import { User } from "@/types/UserType";
 import { apiFetch } from "./apiFetch";
 
-export async function getUserById(id: string): Promise<User> {
+export async function getUser(): Promise<User> {
   try {
-    const res = await apiFetch(`/api/user/${id}`);
+    const res = await apiFetch(`/api/user/me`);
 
     if (!res.ok) {
       throw new Error(`Failed to get user: ${res.status}`);

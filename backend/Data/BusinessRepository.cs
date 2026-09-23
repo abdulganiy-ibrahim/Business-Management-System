@@ -12,7 +12,23 @@ public class BusinessRepository
     _connectionString = connectionString;
   }
 
-  public BusinessRecord Create(Guid userId, CreateBusinessRecord newBusiness)
+  // check existing slug in database
+  public bool SlugExists(string slug)
+  {
+    using var conn = new NpgsqlConnection(_connectionString);
+    conn.Open();
+
+    using var cmd = new NpgsqlCommand(
+      "SELECT slug FROM businesses WHERE slug = @slug",
+      conn
+    );
+  
+    cmd.Parameters.AddWithValue("slug", slug);
+
+    return (bool)cmd.ExecuteScalar()!;
+  }
+
+  public BusinessRecord Create(Guid userId, CreateBusinessRecord newBusiness, string uniqueSlug)
   {
     using var conn = new NpgsqlConnection(_connectionString);
     conn.Open();
@@ -26,11 +42,11 @@ public class BusinessRepository
     cmd.Parameters.AddWithValue("businessName", newBusiness.Name);
     cmd.Parameters.AddWithValue("businessCategory", newBusiness.Category);
     cmd.Parameters.AddWithValue("phoneNumber", newBusiness.PhoneNumber);
-    cmd.Parameters.AddWithValue("slug", newBusiness.Slug);
+    cmd.Parameters.AddWithValue("slug", uniqueSlug);
 
     var newId = (Guid)cmd.ExecuteScalar()!;
 
-    return new BusinessRecord(newId, userId, newBusiness.Name, newBusiness.Category, newBusiness.PhoneNumber, newBusiness.Slug);
+    return new BusinessRecord(newId, userId, newBusiness.Name, newBusiness.Category, newBusiness.PhoneNumber, uniqueSlug);
   }
 
   public BusinessRecord? GetByUserId(Guid userId)

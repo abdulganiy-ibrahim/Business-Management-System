@@ -1,6 +1,6 @@
 'use client';
 
-import { supabase } from '@/lib/supabase/supabaseClient';
+import { supabaseBrowserClient } from '@/lib/supabase/supabaseClient';
 import { useState } from "react"
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
@@ -30,6 +30,8 @@ export default function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    
+    const supabase = await supabaseBrowserClient();
 
     const { data, error } = await supabase.auth.signUp({
       email: formData.email,

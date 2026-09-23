@@ -1,6 +1,6 @@
 'use client';
 
-import { supabase } from '@/lib/supabase/supabaseClient';
+import { supabaseBrowserClient } from '@/lib/supabase/supabaseClient';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { redirect, useRouter } from 'next/navigation';
@@ -30,6 +30,7 @@ export default function SignInForm() {
     e.preventDefault();
     setIsLoading(true);
 
+    const supabase = await supabaseBrowserClient();
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,

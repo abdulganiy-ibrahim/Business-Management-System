@@ -16,8 +16,8 @@ public class UserController : ControllerBase
     _userService = userService;
   }
 
-  [HttpGet("{id}")]
-  public IActionResult GetById()
+  [HttpGet("me")]
+  public IActionResult GetCurrentUser()
   {
     var user = (User)HttpContext.Items["CurrentUser"]!;
 

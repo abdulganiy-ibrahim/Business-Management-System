@@ -6,25 +6,33 @@ using BusinessManagementApi.Model;
 public class BusinessService
 {
   private readonly BusinessRepository _businessRepository;
-  private readonly UserRepository _userRepository;
 
-  public BusinessService(BusinessRepository businessRepository, UserRepository userRepository)
+  public BusinessService(BusinessRepository businessRepository)
   {
     _businessRepository = businessRepository;
-    _userRepository = userRepository;
+  }
+
+  private string GenerateBaseSlug(string name)
+  {
+      var slug = name.ToLower().Trim();
+      slug = System.Text.RegularExpressions.Regex.Replace(slug, @"[^a-z0-9\s-]", "");
+      slug = System.Text.RegularExpressions.Regex.Replace(slug, @"\s+", "-");
+      return slug;
   }
 
   public BusinessRecord Create(Guid userId, CreateBusinessRecord newBusiness)
   {
-    return _businessRepository.Create(userId, newBusiness);
-  }
+    var baseSlug = GenerateBaseSlug(newBusiness.Name);
+    var uniqueSlug = baseSlug;
+    var suffix = 1;
 
-  public BusinessRecord? GetByUserId(Guid userId)
-  {
+    while (_businessRepository.SlugExists(uniqueSlug))
+    {
+      suffix++;
+      uniqueSlug = $"{baseSlug}-{suffix}";
+    }
 
-    var business = _businessRepository.GetByUserId(userId);
-
-    return business;
+    return _businessRepository.Create(userId, newBusiness, uniqueSlug);
   }
 
   public void DeleteById(Guid id)

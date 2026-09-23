@@ -8,13 +8,11 @@ interface OnboardingDashboardProps {
   userName?: string;
   /** Will come from the API once business fetching is wired up. */
   businesses?: Business[];
-  onCreateBusiness?: (values: BusinessFormValues) => Promise<void> | void;
 }
 
 export default function OnboardingDashboard({
   userName,
   businesses = [],
-  onCreateBusiness,
 }: OnboardingDashboardProps) {
   const hasBusinesses = businesses.length > 0;
 
@@ -33,12 +31,12 @@ export default function OnboardingDashboard({
             </section>
 
             <section>
-              <CreateBusinessForm onCreate={onCreateBusiness} compact />
+              <CreateBusinessForm compact />
             </section>
           </div>
         ) : (
           <div className="mx-auto max-w-md">
-            <CreateBusinessForm onCreate={onCreateBusiness} />
+            <CreateBusinessForm />
           </div>
         )}
       </div>

@@ -4,7 +4,9 @@ import { FiPlus } from "react-icons/fi";
 import { Label, Input } from "../ui/FormInput";
 import Select from "../ui/form/Select";
 import { BusinessFormValues } from "@/types/BusinessType";
-
+import { supabaseBrowserClient } from "@/lib/supabase/supabaseClient";
+import { toast } from 'sonner';
+ 
 const CATEGORY_OPTIONS = [
   { label: "Retail", value: "retail" },
   { label: "Restaurant & food", value: "restaurant" },
@@ -19,11 +21,12 @@ const CATEGORY_OPTIONS = [
 type BusinessFormErrors = Partial<Record<keyof BusinessFormValues, string>>;
 
 interface CreateBusinessFormProps {
-  onCreate?: (values: BusinessFormValues) => Promise<void> | void;
   compact?: boolean;
 }
 
-export default function CreateBusinessForm({ onCreate, compact = false }: CreateBusinessFormProps) {
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+export default function CreateBusinessForm({ compact = false }: CreateBusinessFormProps) {
   const [expanded, setExpanded] = useState(!compact);
   const [values, setValues] = useState<BusinessFormValues>({
     name: "",
@@ -54,16 +57,59 @@ export default function CreateBusinessForm({ onCreate, compact = false }: Create
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (!apiUrl) {
+      throw new Error("APi URL is not define");
+      return;
+    }
+
     const validationErrors = validate();
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
+
     setSubmitting(true);
+
     try {
-      await onCreate?.(values);
-      setValues({ name: "", category: "", phone: "" });
-      if (compact) setExpanded(false);
+      const supabase = await supabaseBrowserClient();
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        throw new Error('Authentication required');
+      }
+
+      const res = await fetch(`${apiUrl}/api/business`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+
+        throw new Error(
+          data?.message ?? 'Failed to create business'
+        );
+      }
+
+      const data = await res.json();
+
+      return data;
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'Failed to create business'
+      );
     } finally {
       setSubmitting(false);
     }

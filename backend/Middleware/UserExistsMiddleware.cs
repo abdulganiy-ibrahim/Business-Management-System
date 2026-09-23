@@ -13,27 +13,30 @@ public class UserExistsMiddleware
 
   public async Task InvokeAsync(HttpContext context, UserRepository userRepository)
   {
+    Console.WriteLine($"Middleware hit. IsAuthenticated: {context.User.Identity?.IsAuthenticated}");
+
     if (context.User.Identity?.IsAuthenticated == true)
     {
-        var userIdClaim = context.User.FindFirst("sub")?.Value;
+      var userIdClaim = context.User.FindFirst("sub")?.Value;
 
-        if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
-        {
-            context.Response.StatusCode = 401;
-            await context.Response.WriteAsync("Invalid token.");
-            return;
-        }
+      if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+      {
+          context.Response.StatusCode = 401;
+          await context.Response.WriteAsync("Invalid token.");
+          return;
+      }
+      Console.WriteLine(userId);
+      var user = userRepository.GetById(userId);
 
-        var user = userRepository.GetById(userId);
+      if (user is null)
+      {
+          Console.WriteLine($"UserExistsMiddleware: no user found for id {userId}");
+          context.Response.StatusCode = 401;
+          await context.Response.WriteAsync("User does not exist.");
+          return;
+      }
 
-        if (user is null)
-        {
-            context.Response.StatusCode = 401;
-            await context.Response.WriteAsync("User does not exist.");
-            return;
-        }
-
-        context.Items["CurrentUser"] = user;
+      context.Items["CurrentUser"] = user;
     }
 
     await _next(context);
