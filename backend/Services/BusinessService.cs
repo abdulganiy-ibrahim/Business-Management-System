@@ -35,6 +35,13 @@ public class BusinessService
     return _businessRepository.Create(userId, newBusiness, uniqueSlug);
   }
 
+  public List<BusinessRecord> GetByUserId(Guid userId)
+  {
+    var businesses = _businessRepository.GetByUserId(userId);
+
+    return businesses;
+  }
+
   public void DeleteById(Guid id)
   {
     _businessRepository.DeleteById(id);

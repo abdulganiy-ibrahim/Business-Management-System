@@ -25,4 +25,14 @@ public class BusinessController : ControllerBase
     var business = _businessService.Create(user.Id, newBusiness);
     return Ok(business);
   }
+
+  [HttpGet]
+  public IActionResult GetBusinesses()
+  {
+    var user = (User)HttpContext.Items["CurrentUser"]!;
+
+    var businesses = _businessService.GetByUserId(user.Id);
+
+    return Ok(businesses);
+  }
 }

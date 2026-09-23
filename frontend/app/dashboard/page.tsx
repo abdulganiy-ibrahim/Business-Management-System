@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/supabaseServer";
 import { OnboardingDashboard } from "@/components/create-business-dashboard";
-import { getUser } from "@/lib/data/UserData";
+import { getBusinesses } from "@/lib/data/BusinessData";
+import { toast } from "sonner";
 
 export default async function Page() {
   const supabase = await createSupabaseServerClient();
@@ -11,5 +12,5 @@ export default async function Page() {
     redirect('/sign-up');
   }
   
-  return <OnboardingDashboard businesses={[]} />;
+  return <OnboardingDashboard />;
 }

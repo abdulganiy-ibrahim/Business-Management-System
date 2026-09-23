@@ -49,8 +49,10 @@ public class BusinessRepository
     return new BusinessRecord(newId, userId, newBusiness.Name, newBusiness.Category, newBusiness.PhoneNumber, uniqueSlug);
   }
 
-  public BusinessRecord? GetByUserId(Guid userId)
+  public List<BusinessRecord> GetByUserId(Guid userId)
   {
+    var businesses = new List<BusinessRecord>();
+
     using var conn = new NpgsqlConnection(_connectionString);
     conn.Open();
 
@@ -62,19 +64,19 @@ public class BusinessRepository
 
     using var reader = cmd.ExecuteReader();
 
-    if (reader.Read())
+    while (reader.Read())
     {
-      return new BusinessRecord(
+      businesses.Add(new BusinessRecord(
         reader.GetGuid(0),
         reader.GetGuid(1),
         reader.GetString(2),
         reader.GetString(3),
         reader.GetString(4),
         reader.GetString(5)
-      );
+      ));
     }
 
-    return null;
+    return businesses;
   }
 
   public void DeleteById(Guid id)

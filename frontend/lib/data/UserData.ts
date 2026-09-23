@@ -1,5 +1,5 @@
 import { User } from "@/types/UserType";
-import { apiFetch } from "./apiFetch";
+import { apiFetch } from "../api/apiFetch";
 
 export async function getUser(): Promise<User> {
   try {

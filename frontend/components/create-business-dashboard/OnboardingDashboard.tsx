@@ -1,19 +1,38 @@
 "use client";
+import { useState, useEffect } from "react";
 import OnboardingHeader from "./OnboardingHeader";
 import BusinessList from "./BusinessList";
 import CreateBusinessForm from "./CreateBusinessForm";
-import { Business, BusinessFormValues } from "@/types/BusinessType";
+import { Business } from "@/types/BusinessType";
+import { getBusinesses } from "@/lib/data/BusinessData";
+import { toast } from "sonner";
 
 interface OnboardingDashboardProps {
   userName?: string;
-  /** Will come from the API once business fetching is wired up. */
-  businesses?: Business[];
 }
 
 export default function OnboardingDashboard({
-  userName,
-  businesses = [],
-}: OnboardingDashboardProps) {
+  userName }: OnboardingDashboardProps) {
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+
+  const fetchBusinesses = async () => {
+    try {
+      const data = await getBusinesses();
+
+      setBusinesses(data);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ?
+        error.message :
+        'Failed to fetch Businesses'
+      );
+    } 
+  }
+
+  useEffect(() => {
+    fetchBusinesses();
+  }, []);
+  
   const hasBusinesses = businesses.length > 0;
 
   return (
