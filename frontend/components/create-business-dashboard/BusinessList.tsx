@@ -7,7 +7,6 @@ import { Input } from "../ui/FormInput";
 import Select from "../ui/form/Select";
 import { Business, BusinessFormValues as BusinessDraft } from "@/types/BusinessType";
 import { CATEGORY_OPTIONS } from "@/lib/data/BusinessCategory";
-
 import { deleteBusinessById, editBusinessById } from "@/lib/data/BusinessData";
 import { toast } from "sonner";
 
