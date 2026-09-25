@@ -15,8 +15,17 @@ public class ProductService
   }
 
   // Create product method
-  public void Create(CreateProductRecord newProduct)
+  public int Create(Guid userId, CreateProductRecord newProduct)
   {
-    
+    var business = _businessRepository.GetById(userId, newProduct.BusinessId);
+
+    if (business is null)
+    {
+      throw new KeyNotFoundException("Business does not exist or does not belong to you");
+    }
+
+    var productId = _productRepository.Create(newProduct);
+
+    return productId;
   }
 }
