@@ -4,29 +4,18 @@ import { FiPlus } from "react-icons/fi";
 import { Label, Input } from "../ui/FormInput";
 import Select from "../ui/form/Select";
 import { BusinessFormValues } from "@/types/BusinessType";
-import { supabaseBrowserClient } from "@/lib/supabase/supabaseClient";
 import { toast } from 'sonner';
- 
-const CATEGORY_OPTIONS = [
-  { label: "Retail", value: "retail" },
-  { label: "Restaurant & food", value: "restaurant" },
-  { label: "Fashion & apparel", value: "fashion" },
-  { label: "Grocery & supermarket", value: "grocery" },
-  { label: "Electronics", value: "electronics" },
-  { label: "Health & beauty", value: "health-beauty" },
-  { label: "Services", value: "services" },
-  { label: "Other", value: "other" },
-];
+import { CATEGORY_OPTIONS } from "@/lib/data/BusinessCategory";
+import { createBusiness } from "@/lib/data/BusinessData";
 
 type BusinessFormErrors = Partial<Record<keyof BusinessFormValues, string>>;
 
 interface CreateBusinessFormProps {
   compact?: boolean;
+  onBusinessCreated: () => void;
 }
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-export default function CreateBusinessForm({ compact = false }: CreateBusinessFormProps) {
+export default function CreateBusinessForm({ compact = false, onBusinessCreated }: CreateBusinessFormProps) {
   const [expanded, setExpanded] = useState(!compact);
   const [values, setValues] = useState<BusinessFormValues>({
     name: "",
@@ -58,11 +47,6 @@ export default function CreateBusinessForm({ compact = false }: CreateBusinessFo
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!apiUrl) {
-      throw new Error("APi URL is not define");
-      return;
-    }
-
     const validationErrors = validate();
 
     if (Object.keys(validationErrors).length > 0) {
@@ -73,37 +57,11 @@ export default function CreateBusinessForm({ compact = false }: CreateBusinessFo
     setSubmitting(true);
 
     try {
-      const supabase = await supabaseBrowserClient();
+      await createBusiness(values);
 
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
+      await onBusinessCreated();
 
-      if (sessionError || !session) {
-        throw new Error('Authentication required');
-      }
-
-      const res = await fetch(`${apiUrl}/api/business`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-
-        throw new Error(
-          data?.message ?? 'Failed to create business'
-        );
-      }
-
-      const data = await res.json();
-
-      return data;
+      toast.success("Congratulations! Your business has been created");
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -180,7 +138,7 @@ export default function CreateBusinessForm({ compact = false }: CreateBusinessFo
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-70"
+            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-70 transition-all duration-300"
           >
             {submitting ? "Creating…" : "Create business"}
           </button>

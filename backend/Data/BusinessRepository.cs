@@ -79,6 +79,43 @@ public class BusinessRepository
     return businesses;
   }
 
+  public BusinessRecord? EditById(
+    Guid id,
+    Guid userId,
+    CreateBusinessRecord editingBusiness
+  )
+  {
+    using var conn = new NpgsqlConnection(_connectionString);
+    conn.Open();
+
+    using var cmd = new NpgsqlCommand(
+      "UPDATE businesses SET business_name = @businessName, business_category = @businessCategory, phone_number = @phoneNumber WHERE id = @id AND user_id = @userId RETURNING id, user_id, business_name, business_category, phone_number, slug",
+      conn
+    );
+
+    cmd.Parameters.AddWithValue("businessName", editingBusiness.Name);
+    cmd.Parameters.AddWithValue("businessCategory", editingBusiness.Category);
+    cmd.Parameters.AddWithValue("phoneNumber", editingBusiness.PhoneNumber);
+    cmd.Parameters.AddWithValue("id", id);
+    cmd.Parameters.AddWithValue("userId", userId);
+
+    using var reader = cmd.ExecuteReader();
+
+    if (!reader.Read())
+    {
+      return null;
+    }
+
+    return new BusinessRecord(
+      reader.GetGuid(0),
+      reader.GetGuid(1),
+      reader.GetString(2),
+      reader.GetString(3),
+      reader.GetString(4),
+      reader.GetString(5)
+    );
+  }
+
   public void DeleteById(Guid id)
   {
     using var conn = new NpgsqlConnection(_connectionString);

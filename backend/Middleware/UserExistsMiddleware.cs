@@ -16,25 +16,22 @@ public class UserExistsMiddleware
 
     if (context.User.Identity?.IsAuthenticated == true)
     {
-      Console.WriteLine($"Middleware hit. IsAuthenticated: {context.User.Identity?.IsAuthenticated}");
-
       var userIdClaim = context.User.FindFirst("sub")?.Value;
 
       if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
       {
-          context.Response.StatusCode = 401;
-          await context.Response.WriteAsync("Invalid token.");
-          return;
+        context.Response.StatusCode = 401;
+        await context.Response.WriteAsync("Invalid token.");
+        return;
       }
 
       var user = userRepository.GetById(userId);
 
       if (user is null)
       {
-          Console.WriteLine($"UserExistsMiddleware: no user found for id {userId}");
-          context.Response.StatusCode = 401;
-          await context.Response.WriteAsync("User does not exist.");
-          return;
+        context.Response.StatusCode = 401;
+        await context.Response.WriteAsync("User does not exist.");
+        return;
       }
 
       context.Items["CurrentUser"] = user;

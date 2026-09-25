@@ -36,26 +36,26 @@ export default function OnboardingDashboard({
   const hasBusinesses = businesses.length > 0;
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="mx-auto max-w-5xl">
+    <main className="min-h-screen bg-white">
+      <div>
         <OnboardingHeader userName={userName} />
 
         {hasBusinesses ? (
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
             <section>
-              <h2 className="mb-4 text-sm font-medium text-muted">
+              <h2 className="mb-4 text-sm font-medium text-muted px-2">
                 Your businesses
               </h2>
               <BusinessList businesses={businesses} />
             </section>
 
             <section>
-              <CreateBusinessForm compact />
+              <CreateBusinessForm compact onBusinessCreated={fetchBusinesses} />
             </section>
           </div>
         ) : (
           <div className="mx-auto max-w-md">
-            <CreateBusinessForm />
+            <CreateBusinessForm onBusinessCreated={fetchBusinesses} />
           </div>
         )}
       </div>

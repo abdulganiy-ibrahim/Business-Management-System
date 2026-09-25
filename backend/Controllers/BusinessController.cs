@@ -35,4 +35,22 @@ public class BusinessController : ControllerBase
 
     return Ok(businesses);
   }
+
+  [HttpPut("{id}")]
+  public IActionResult EditById(Guid id, CreateBusinessRecord editingBusiness)
+  {
+    var user = (User)HttpContext.Items["CurrentUser"]!;
+
+    var business = _businessService.EditById(id, user.Id, editingBusiness);
+
+    return Ok(business);
+  }
+
+  [HttpDelete("{id}")]
+  public IActionResult DeleteById(Guid id)
+  {
+    _businessService.DeleteById(id);
+    
+    return NoContent();
+  }
 }
