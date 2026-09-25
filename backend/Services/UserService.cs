@@ -1,7 +1,7 @@
 using BusinessManagementApi.Data;
 using BusinessManagementApi.Model;
 
-namespace BusinessManagementApi.Services;
+namespace BusinessManagementApi.Service;
 
 public class UserService
 {

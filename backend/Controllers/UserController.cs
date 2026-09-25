@@ -1,5 +1,5 @@
 using BusinessManagementApi.Model;
-using BusinessManagementApi.Services;
+using BusinessManagementApi.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BusinessManagementApi.Controller;

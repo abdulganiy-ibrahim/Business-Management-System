@@ -50,6 +50,7 @@ The `Businesses` table stores information about businesses registered by users. 
 | `user_id`           | UUID | NOT NULL, FOREIGN KEY |
 | `business_name`     | TEXT | NOT NULL              |
 | `business_category` | TEXT | NOT NULL              |
+| `slug`              | TEXT | NOT NULL              |
 
 ### Relationships
 
@@ -61,6 +62,11 @@ The `Businesses` table stores information about businesses registered by users. 
 **Foreign Key:**
 
 `Businesses.user_id → Users.id`
+
+### Buinesses Table Rules
+* Only authenticated and authorized user can create a business.
+* A Business can be edited once created
+* User must be authenticated and authorized before accessing a business dashboard or modify business data
 
 ---
 
