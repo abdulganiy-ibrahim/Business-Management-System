@@ -90,7 +90,9 @@ public class BusinessRepository
         id,
         user_id,
         business_name, 
-        business_category
+        business_category,
+        phone_number,
+        slug
       FROM businesses 
       WHERE id = @id
       AND user_id = @user_id
@@ -109,7 +111,9 @@ public class BusinessRepository
         reader.GetGuid(0),
         reader.GetGuid(1),
         reader.GetString(2),
-        reader.GetString(3)
+        reader.GetString(3),
+        reader.GetString(4),
+        reader.GetString(5)
       );
     }
 
