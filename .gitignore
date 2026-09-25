@@ -1,0 +1,59 @@
+## backend (.NET)
+backend/bin/
+backend/obj/
+
+# Visual Studio user-specific files
+*.user
+*.suo
+
+# VS Code / Visual Studio settings (optional - some teams commit this)
+.vs/
+.vscode/
+
+# appsettings overrides that may contain secrets
+appsettings.*.json
+!appsettings.json
+!appsettings.Production.json
+
+# Environment files
+.env
+
+## frontend (Next.js)
+# dependencies
+frontend/node_modules
+frontend/.pnp
+frontend/.pnp.*
+frontend/.yarn/*
+!frontend/.yarn/patches
+!frontend/.yarn/plugins
+!frontend/.yarn/releases
+!frontend/.yarn/versions
+
+# testing
+frontend/coverage
+
+# next.js
+frontend/.next/
+frontend/out/
+
+# production build
+frontend/build
+
+# env files (opt-in for committing if needed)
+frontend/.env*
+
+# vercel
+frontend/.vercel
+
+# typescript
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+## misc (both)
+.DS_Store
+Thumbs.db
+*.pem
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*

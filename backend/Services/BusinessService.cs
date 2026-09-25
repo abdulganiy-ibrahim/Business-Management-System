@@ -42,22 +42,6 @@ public class BusinessService
     return businesses;
   }
 
-  public BusinessRecord? EditById(
-    Guid id,
-    Guid userId,
-    CreateBusinessRecord editingBusiness
-  )
-  {
-    var business = _businessRepository.EditById(id, userId, editingBusiness);
-
-    if (business is null)
-    {
-      throw new InvalidOperationException("Business not found");
-    }
-
-    return business;
-  }
-
   public void DeleteById(Guid id)
   {
     _businessRepository.DeleteById(id);
