@@ -79,6 +79,43 @@ public class BusinessRepository
     return businesses;
   }
 
+  public BusinessRecord? GetById(Guid id, Guid userId)
+  {
+    using var conn = new NpgsqlConnection(_connectionString);
+    conn.Open();
+
+    using var cmd = new NpgsqlCommand(
+      """
+      SELECT 
+        id,
+        user_id,
+        business_name, 
+        business_category
+      FROM businesses 
+      WHERE id = @id
+      AND user_id = @user_id
+      """,
+      conn
+    );
+
+    cmd.Parameters.AddWithValue("id", id);
+    cmd.Parameters.AddWithValue("user_id", userId);
+
+    using var reader = cmd.ExecuteReader();
+
+    if (reader.Read())
+    {
+      return new BusinessRecord(
+        reader.GetGuid(0),
+        reader.GetGuid(1),
+        reader.GetString(2),
+        reader.GetString(3)
+      );
+    }
+
+    return null;
+  }
+
   public void DeleteById(Guid id)
   {
     using var conn = new NpgsqlConnection(_connectionString);
