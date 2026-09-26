@@ -12,7 +12,7 @@ public class UserService
     _userRepository = userRepository;
   }
 
-  public User? GetById(Guid userId)
+  public UserRecord? GetById(Guid userId)
   {
     var user = _userRepository.GetById(userId);
 
