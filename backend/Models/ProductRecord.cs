@@ -1,7 +1,6 @@
 namespace BusinessManagementApi.Model;
 
 public record CreateProductRecord(
-  Guid BusinessId,
   string Name,
   string? Sku,
   decimal CostPrice, 
@@ -16,5 +15,5 @@ public record ProductRecord(
   decimal CostPrice,
   decimal SellingPrice,
   DateTime CreatedAt,
-  DateTime UpdatedAt
+  DateTime? UpdatedAt
 );

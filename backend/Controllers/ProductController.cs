@@ -16,19 +16,4 @@ public class ProductController : ControllerBase
   {
     _productService = productService;
   }
-
-  [HttpPost]
-  public IActionResult Create(CreateProductRecord newProduct)
-  {
-    var user = (User)HttpContext.Items["CurrentUser"]!;
-
-    try
-    {
-      var productId = _productService.Create(user.Id, newProduct);
-      return Ok(productId);
-    } catch (KeyNotFoundException ex)
-    {
-      return NotFound(ex.Message);
-    }
-  }
 }

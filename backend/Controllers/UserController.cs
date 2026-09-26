@@ -19,7 +19,7 @@ public class UserController : ControllerBase
   [HttpGet("me")]
   public IActionResult GetCurrentUser()
   {
-    var user = (User)HttpContext.Items["CurrentUser"]!;
+    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
 
     var userData = _userService.GetById(user.Id);
 

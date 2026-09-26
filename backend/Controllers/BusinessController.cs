@@ -20,7 +20,7 @@ public class BusinessController : ControllerBase
   [HttpPost]
   public IActionResult Create(CreateBusinessRecord newBusiness)
   {
-    var user = (User)HttpContext.Items["CurrentUser"]!;
+    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
 
     var business = _businessService.Create(user.Id, newBusiness);
     return Ok(business);
@@ -29,7 +29,7 @@ public class BusinessController : ControllerBase
   [HttpGet]
   public IActionResult GetBusinesses()
   {
-    var user = (User)HttpContext.Items["CurrentUser"]!;
+    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
 
     var businesses = _businessService.GetByUserId(user.Id);
 
