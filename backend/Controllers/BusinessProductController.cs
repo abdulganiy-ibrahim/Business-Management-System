@@ -62,6 +62,29 @@ public class BusinessProductController : ControllerBase
     }
   }
 
+  [HttpPatch("{productId}")]
+  [Authorize]
+  public IActionResult Update(Guid businessId, int productId, UpdateProductRecord request)
+  {
+    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
+
+    try
+    {
+      var updated = _productService.Update(user.Id, businessId, productId, request);
+
+      if (!updated)
+      {
+          return NotFound("Product not found or nothing to update.");
+      }
+
+      return NoContent();
+    }
+    catch (KeyNotFoundException ex)
+    {
+        return NotFound(ex.Message);
+    }
+  }
+
   [HttpDelete("{productId}")]
   public IActionResult DeleteById(Guid businessId, int productId)
   {

@@ -57,6 +57,18 @@ public class ProductService
     return product;
   }
 
+  public bool Update(Guid userId, Guid businessId, int productId, UpdateProductRecord request)
+{
+    var business = _businessRepository.GetById(userId, businessId);
+
+    if (business is null)
+    {
+      throw new KeyNotFoundException("Business does not exist or does not belong to you.");
+    }
+
+    return _productRepository.Update(productId, request);
+}
+
   // Delete by productId;
   public void DeleteById(Guid userId, Guid businessId, int productId)
   {

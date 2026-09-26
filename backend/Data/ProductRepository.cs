@@ -134,6 +134,55 @@ public class ProductRepository
     return null;
   }
 
+  public bool Update(int productId, UpdateProductRecord request)
+  {
+    var updates = new List<string>();
+
+    using var conn = new NpgsqlConnection(_connectionString);
+    conn.Open();
+
+    using var command = new NpgsqlCommand();
+    command.Connection = conn;
+
+    command.Parameters.AddWithValue("@id", productId);
+
+    if (request.Name is not null)
+    {
+      updates.Add("name = @name");
+      command.Parameters.AddWithValue("@name", request.Name);
+    }
+
+    if (request.Sku is not null)
+    {
+      updates.Add("sku = @sku");
+      command.Parameters.AddWithValue("@sku", request.Sku);
+    }
+
+    if (request.CostPrice.HasValue)
+    {
+      updates.Add("cost_price = @costPrice");
+      command.Parameters.AddWithValue("@costPrice", request.CostPrice.Value);
+    }
+
+    if (request.SellingPrice.HasValue)
+    {
+      updates.Add("selling_price = @sellingPrice");
+      command.Parameters.AddWithValue("@sellingPrice", request.SellingPrice.Value);
+    }
+
+    if (updates.Count == 0)
+    {
+      return false;
+    }
+
+    updates.Add("updated_at = NOW()");
+
+    command.CommandText = $"UPDATE products SET {string.Join(", ", updates)} WHERE id = @id";
+
+    var rowsAffected = command.ExecuteNonQuery();
+    return rowsAffected > 0;
+  }
+
   // Delete product by id;
   public void DeleteById(int id)
   {

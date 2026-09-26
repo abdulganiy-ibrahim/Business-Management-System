@@ -17,3 +17,10 @@ public record ProductRecord(
   DateTime CreatedAt,
   DateTime? UpdatedAt
 );
+
+public record UpdateProductRecord(
+  string? Name,
+  string? Sku,
+  decimal? CostPrice, 
+  decimal? SellingPrice
+);
