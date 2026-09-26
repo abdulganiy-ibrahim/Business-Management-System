@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using BusinessManagementApi.Data;
-using BusinessManagementApi.Services;
+using BusinessManagementApi.Service;
 using BusinessManagementApi.Middleware;
+using BusinessManagementApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +14,12 @@ var connectionString = builder.Configuration.GetConnectionString("BusinessManage
 // Register Repositories with the DI Container
 builder.Services.AddScoped<UserRepository>(sp => new UserRepository(connectionString));
 builder.Services.AddScoped<BusinessRepository>(sp => new BusinessRepository(connectionString));
+builder.Services.AddScoped<ProductRepository>(sp => new ProductRepository(connectionString));
 
 // Register Services with the DI Container
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ProductService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
