@@ -10,8 +10,8 @@ export interface Product {
   businessId: string;
   name: string;
   sku?: string;
-  costPrice: string;
-  sellingPrice: string;
+  costPrice: number;
+  sellingPrice: number;
   createdAt: string;
   updatedAt: string;
 }
