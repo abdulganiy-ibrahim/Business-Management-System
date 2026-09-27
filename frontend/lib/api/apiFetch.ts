@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "../supabase/supabaseServer";
+import { supabaseServerClient } from "../supabase/supabaseServer";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -10,7 +10,7 @@ export async function apiFetch(
     throw new Error("API URL is not defined");
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await supabaseServerClient();
 
   const {
     data: { session },

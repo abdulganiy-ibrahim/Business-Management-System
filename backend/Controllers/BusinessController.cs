@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/business")]
+[Route("api/businesses")]
 [Authorize]
 public class BusinessController : ControllerBase
 {
@@ -34,5 +34,23 @@ public class BusinessController : ControllerBase
     var businesses = _businessService.GetByUserId(user.Id);
 
     return Ok(businesses);
+  }
+
+  [HttpGet("{businessSlug}")]
+  public IActionResult GetBySlug(string businessSlug)
+  {
+    var user = (User)HttpContext.Items["CurrentUser"]!;
+
+    try
+    {
+      var business = _businessService.GetBySlug(user.Id, businessSlug);
+      return Ok(business);
+    } catch (KeyNotFoundException ex)
+    {
+      return NotFound(ex.Message);
+    } catch (UnauthorizedAccessException ex)
+    {
+      return Unauthorized(ex.Message);
+    }
   }
 }
