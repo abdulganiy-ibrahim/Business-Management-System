@@ -12,7 +12,7 @@ public class UserRepository
     _connectionString = connectionString;
   }
 
-  public User? GetById(Guid id)
+  public UserRecord? GetById(Guid id)
   {
     using var conn = new NpgsqlConnection(_connectionString);
     conn.Open();
@@ -26,7 +26,7 @@ public class UserRepository
 
     if (reader.Read())
     {
-      return new User(
+      return new UserRecord(
           reader.GetGuid(0),
           reader.GetString(1),
           reader.IsDBNull(2) ? null : reader.GetString(2),

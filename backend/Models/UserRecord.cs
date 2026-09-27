@@ -1,6 +1,6 @@
 namespace BusinessManagementApi.Model;
 
-public record User(
+public record UserRecord(
     Guid Id,
     string Email,
     string? DisplayName,

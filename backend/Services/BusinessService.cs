@@ -1,4 +1,4 @@
-namespace BusinessManagementApi.Services;
+namespace BusinessManagementApi.Service;
 
 using BusinessManagementApi.Data;
 using BusinessManagementApi.Model;

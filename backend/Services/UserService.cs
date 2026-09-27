@@ -1,7 +1,7 @@
 using BusinessManagementApi.Data;
 using BusinessManagementApi.Model;
 
-namespace BusinessManagementApi.Services;
+namespace BusinessManagementApi.Service;
 
 public class UserService
 {
@@ -12,7 +12,7 @@ public class UserService
     _userRepository = userRepository;
   }
 
-  public User? GetById(Guid userId)
+  public UserRecord? GetById(Guid userId)
   {
     var user = _userRepository.GetById(userId);
 
