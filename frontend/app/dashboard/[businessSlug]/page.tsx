@@ -2,6 +2,7 @@ import { supabaseServerClient } from "@/lib/supabase/supabaseServer";
 import { redirect } from "next/navigation";
 import { getBusinessBySlug } from "@/lib/data/BusinessData";
 import { Business } from "@/types/BusinessType";
+import { getServerApi } from "@/lib/api/serverApi";
 
 type ParamsProps = {
   params: Promise<{
@@ -19,11 +20,12 @@ export default async function BusinessDashboardPage({ params }: ParamsProps) {
   }
 
   const { businessSlug } = await params;
+  const api = await getServerApi();
 
   let business: Business;
 
   try {
-    business = await getBusinessBySlug(businessSlug); 
+    business = await getBusinessBySlug(api, businessSlug); 
   } catch (error) {
     console.log(error);
     return;

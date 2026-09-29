@@ -51,7 +51,7 @@ public class BusinessService
       throw new KeyNotFoundException("Can't find business with the slug provided");
     }
 
-    if (business.Id != userId)
+    if (business.UserId != userId)
     {
       throw new UnauthorizedAccessException("You are not eligible to get this business");
     }

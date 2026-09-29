@@ -7,6 +7,7 @@ import { BusinessFormValues } from "@/types/BusinessType";
 import { toast } from 'sonner';
 import { CATEGORY_OPTIONS } from "@/lib/data/BusinessCategory";
 import { createBusiness } from "@/lib/data/BusinessData";
+import { browserApi } from "@/lib/api/browserApi";
 
 type BusinessFormErrors = Partial<Record<keyof BusinessFormValues, string>>;
 
@@ -57,7 +58,7 @@ export default function CreateBusinessForm({ compact = false, onBusinessCreated 
     setSubmitting(true);
 
     try {
-      await createBusiness(values);
+      await createBusiness(browserApi, values);
 
       await onBusinessCreated();
 
