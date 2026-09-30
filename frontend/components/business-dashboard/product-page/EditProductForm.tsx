@@ -3,14 +3,16 @@
 import { useRouter } from "next/navigation";
 import Modal from "@/components/ui/Modal";
 import type { Product } from "@/types/productType";
-// TODO: match this import and the call below to your real helper
-// import { updateProduct } from "@/lib/data/productData";
 import ProductForm from "./ProductForm";
 import { useProductForm } from "./useProductForm";
+import { updateProduct } from "@/lib/data/productData";
+import { browserApi } from "@/lib/api/browserApi";
+import { Business } from "@/types/BusinessType";
 
 type EditProductFormProps = {
   product: Product;
   onClose: () => void;
+  businessId: string;
 };
 
 // Mount this only while it's open, with key={product.id} (see ProductsView),
@@ -18,6 +20,7 @@ type EditProductFormProps = {
 export default function EditProductForm({
   product,
   onClose,
+  businessId
 }: EditProductFormProps) {
   const router = useRouter();
 
@@ -29,7 +32,7 @@ export default function EditProductForm({
       sellingPrice: String(product.sellingPrice),
     },
     onSubmit: async (payload) => {
-      // await updateProduct(product.id, payload);
+      await updateProduct(browserApi, businessId, product.id, payload);
       router.refresh(); // reload the product list
       onClose();
     },

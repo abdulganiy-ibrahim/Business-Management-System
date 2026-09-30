@@ -77,14 +77,20 @@ public class BusinessProductController : ControllerBase
 
       if (!updated)
       {
-          return NotFound("Product not found or nothing to update.");
+          return NotFound(new
+          {
+            message = "Product not found or nothing to update."
+          });
       }
 
       return NoContent();
     }
     catch (KeyNotFoundException ex)
     {
-        return NotFound(ex.Message);
+        return NotFound(new
+        {
+          message = ex.Message
+        });
     }
   }
 

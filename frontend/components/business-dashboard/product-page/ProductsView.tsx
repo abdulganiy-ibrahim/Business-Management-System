@@ -91,6 +91,7 @@ export default function ProductsView({
           key={editingProduct.id}
           product={editingProduct}
           onClose={() => setEditingProduct(null)}
+          businessId={businessId}
         />
       )}
     </div>

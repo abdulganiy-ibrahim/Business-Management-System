@@ -1,5 +1,5 @@
 import type { AxiosInstance } from 'axios';
-import { CreateProduct, Product } from '@/types/productType';
+import { CreateProduct, Product, UpdateProduct } from '@/types/productType';
 
 
 export async function createProduct(api: AxiosInstance, businessId: string, newProduct: CreateProduct) {
@@ -16,6 +16,12 @@ export async function getProductsByBusinessId(api: AxiosInstance, businessId: st
 
 export async function getProductById(api: AxiosInstance, businessId: string, productId: number): Promise<Product> {
   const res = await api.get<Product>(`api/business/${businessId}/products/${productId}`);
+
+  return res.data;
+}
+
+export async function updateProduct(api: AxiosInstance, businessId: string, productId: number, values: UpdateProduct) {
+  const res = await api.patch(`api/business/${businessId}/products/${productId}`, values);
 
   return res.data;
 }
