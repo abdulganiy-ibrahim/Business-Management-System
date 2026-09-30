@@ -5,11 +5,7 @@ import { FiChevronDown, FiLogOut, FiSettings, FiUser } from "react-icons/fi";
 import { useDropdown } from "@/hooks/useDropdown";
 import Avatar from "./Avatar";
 import { dropdownItem, dropdownPanel, focusRing } from "./headerStyles";
-
-export type HeaderUser = {
-  name: string;
-  email: string;
-};
+import { User } from "@/types/UserType";
 
 // TODO: change these to your real routes
 const MENU_LINKS = [
@@ -18,11 +14,12 @@ const MENU_LINKS = [
 ];
 
 type UserMenuProps = {
-  user: HeaderUser;
+  user: User;
   onSignOut: () => void;
+  loading: boolean;
 };
 
-export default function UserMenu({ user, onSignOut }: UserMenuProps) {
+export default function UserMenu({ user, onSignOut, loading }: UserMenuProps) {
   const { ref, isOpen, toggle, close } = useDropdown();
 
   return (
@@ -36,9 +33,9 @@ export default function UserMenu({ user, onSignOut }: UserMenuProps) {
         aria-label="Open user menu"
         className={`flex items-center gap-2 rounded-full p-1 transition-colors hover:bg-sunken lg:rounded-xl lg:pr-2.5 ${focusRing}`}
       >
-        <Avatar name={user.name} className="rounded-full" />
+        <Avatar name={user.displayName} className="rounded-full" />
         <span className="hidden max-w-32 truncate text-sm font-medium text-foreground lg:block">
-          {user.name}
+          {user.displayName}
         </span>
         <FiChevronDown
           className={`hidden size-4 shrink-0 text-muted transition-transform lg:block ${
@@ -54,7 +51,7 @@ export default function UserMenu({ user, onSignOut }: UserMenuProps) {
         >
           <div className="border-b border-border px-4 py-3">
             <p className="truncate text-sm font-semibold text-foreground">
-              {user.name}
+              {user.displayName}
             </p>
             <p className="truncate text-xs text-muted">{user.email}</p>
           </div>
@@ -82,10 +79,11 @@ export default function UserMenu({ user, onSignOut }: UserMenuProps) {
                 close();
                 onSignOut();
               }}
+              disabled={loading}
               className={`${dropdownItem} text-danger`}
             >
               <FiLogOut className="size-4 shrink-0" />
-              Sign out
+              {loading ? 'Signing out' : 'Sign out' }
             </button>
           </div>
         </div>

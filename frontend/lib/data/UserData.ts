@@ -1,16 +1,8 @@
+import type { AxiosInstance } from "axios";
 import { User } from "@/types/UserType";
-import { apiFetch } from "../api/apiFetch";
 
-export async function getUser(): Promise<User> {
-  try {
-    const res = await apiFetch(`/api/user/me`);
+export async function getCurrentUser(api: AxiosInstance): Promise<User> {
+  const res = await api.get<User>(`/api/users/me`);
 
-    if (!res.ok) {
-      throw new Error(`Failed to get user: ${res.status}`);
-    }
-
-    return res.json();
-  } catch (error) {
-    throw error;
-  }
+  return res.data;
 }

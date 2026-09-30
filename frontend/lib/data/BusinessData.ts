@@ -5,7 +5,7 @@ export async function createBusiness(
   api: AxiosInstance,
   values: BusinessFormValues
   ) {
-  const res = await api.post("/businesses", values);
+  const res = await api.post("api/businesses", values);
   return res.data;
 
 }
