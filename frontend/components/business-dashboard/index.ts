@@ -6,3 +6,6 @@ export { default as Sidebar } from './sidebar/Sidebar';
 
 // Export Business Dashboard Shell;
 export { default as DashboardShell } from './DashboardShell';
+
+// Export ProductsView from product-page
+export { default as ProductsView } from './product-page/ProductsView'

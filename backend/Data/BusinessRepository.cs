@@ -79,7 +79,7 @@ public class BusinessRepository
     return businesses;
   }
 
-  public BusinessRecord? GetById(Guid id, Guid userId)
+  public BusinessRecord? GetById(Guid userId, Guid businessId)
   {
     using var conn = new NpgsqlConnection(_connectionString);
     conn.Open();
@@ -100,7 +100,7 @@ public class BusinessRepository
       conn
     );
 
-    cmd.Parameters.AddWithValue("id", id);
+    cmd.Parameters.AddWithValue("id", businessId);
     cmd.Parameters.AddWithValue("user_id", userId);
 
     using var reader = cmd.ExecuteReader();
