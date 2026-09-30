@@ -120,6 +120,45 @@ public class BusinessRepository
     return null;
   }
 
+  public BusinessRecord? GetBySlug(string slug)
+  {
+    using var conn = new NpgsqlConnection(_connectionString);
+    conn.Open();
+
+    using var command = new NpgsqlCommand(
+      """
+        SELECT 
+          id,
+          user_id,
+          business_name,
+          business_category,
+          phone_number,
+          slug
+        FROM businesses
+        WHERE slug = @slug
+      """,
+      conn
+    );
+
+    command.Parameters.AddWithValue("slug", slug);
+
+    using var reader = command.ExecuteReader();
+
+    if (reader.Read())
+    {
+      return new BusinessRecord(
+        reader.GetGuid(0),
+        reader.GetGuid(1),
+        reader.GetString(2),
+        reader.GetString(3),
+        reader.GetString(4),
+        reader.GetString(5)
+      );
+    }
+
+    return null;
+  }
+
   public void DeleteById(Guid id)
   {
     using var conn = new NpgsqlConnection(_connectionString);

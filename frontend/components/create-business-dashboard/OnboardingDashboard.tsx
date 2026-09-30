@@ -5,6 +5,7 @@ import BusinessList from "./BusinessList";
 import CreateBusinessForm from "./CreateBusinessForm";
 import { Business } from "@/types/BusinessType";
 import { getBusinesses } from "@/lib/data/BusinessData";
+import { browserApi } from "@/lib/api/browserApi";
 import { toast } from "sonner";
 
 interface OnboardingDashboardProps {
@@ -17,7 +18,7 @@ export default function OnboardingDashboard({
 
   const fetchBusinesses = async () => {
     try {
-      const data = await getBusinesses();
+      const data = await getBusinesses(browserApi);
 
       setBusinesses(data);
     } catch (error) {
