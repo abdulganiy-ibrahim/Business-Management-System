@@ -42,6 +42,23 @@ public class BusinessService
     return businesses;
   }
 
+  public BusinessRecord? GetBySlug(Guid userId, string slug)
+  {
+    var business = _businessRepository.GetBySlug(slug);
+
+    if (business is null)
+    {
+      throw new KeyNotFoundException("Can't find business with the slug provided");
+    }
+
+    if (business.UserId != userId)
+    {
+      throw new UnauthorizedAccessException("You are not eligible to get this business");
+    }
+
+    return business;
+  }
+
   public void DeleteById(Guid id)
   {
     _businessRepository.DeleteById(id);

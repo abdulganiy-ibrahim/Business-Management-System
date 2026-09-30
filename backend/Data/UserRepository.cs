@@ -18,8 +18,19 @@ public class UserRepository
     conn.Open();
 
     using var cmd = new NpgsqlCommand(
-      "SELECT id, email, raw_user_meta_data->>'name', phone, created_at, last_sign_in_at FROM auth.users WHERE id = @id",
-      conn);
+        """
+        SELECT
+          id,
+          email,
+          display_name,
+          phone,
+          created_at,
+          last_sign_in
+        FROM public.users
+        WHERE id = @id
+        """,
+        conn);
+
     cmd.Parameters.AddWithValue("id", id);
 
     using var reader = cmd.ExecuteReader();
@@ -27,12 +38,12 @@ public class UserRepository
     if (reader.Read())
     {
       return new UserRecord(
-          reader.GetGuid(0),
-          reader.GetString(1),
-          reader.IsDBNull(2) ? null : reader.GetString(2),
-          reader.IsDBNull(3) ? null : reader.GetString(3),
-          reader.GetDateTime(4),
-          reader.IsDBNull(5) ? null : reader.GetDateTime(5)
+        reader.GetGuid(0),
+        reader.GetString(1),
+        reader.GetString(2),
+        reader.IsDBNull(3) ? null : reader.GetString(3),
+        reader.GetDateTime(4),
+        reader.GetDateTime(5)
       );
     }
 

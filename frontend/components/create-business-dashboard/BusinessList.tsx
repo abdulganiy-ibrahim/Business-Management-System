@@ -9,6 +9,7 @@ import { Business, BusinessFormValues as BusinessDraft } from "@/types/BusinessT
 import { CATEGORY_OPTIONS } from "@/lib/data/BusinessCategory";
 import { deleteBusinessById, editBusinessById } from "@/lib/data/BusinessData";
 import { toast } from "sonner";
+import { browserApi } from "@/lib/api/browserApi";
 
 export default function BusinessList({ businesses }: { businesses: Business[] }) {
   const [items, setItems] = useState<Business[]>(businesses);
@@ -38,7 +39,7 @@ export default function BusinessList({ businesses }: { businesses: Business[] })
 
   const handleSaveEdit = async (business: Business) => {
     try {
-      const editedBusiness = await editBusinessById(business.id, draft);
+      const editedBusiness = await editBusinessById(browserApi, business.id, draft);
       
       setItems((prev) =>
         prev.map((item) =>
@@ -66,7 +67,7 @@ export default function BusinessList({ businesses }: { businesses: Business[] })
         label: "Delete",
         onClick: async () => {
           try {
-            await deleteBusinessById(business.id);
+            await deleteBusinessById(browserApi, business.id);
 
             setItems((prev) =>
               prev.filter((item) => item.id !== business.id)

@@ -40,7 +40,7 @@ export default function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
         data: {
           name: formData.name, // stored as user metadata in Supabase
         },
-        emailRedirectTo: `${window.location.origin}/signup`,
+        emailRedirectTo: `${window.location.origin}/sign-up`,
       },
     });
 

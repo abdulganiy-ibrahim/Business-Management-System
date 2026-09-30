@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BusinessManagementApi.Controller;
 
 [ApiController]
-[Route("api/user")]
+[Route("api/users")]
 
 public class UserController : ControllerBase
 {
