@@ -36,7 +36,7 @@ export default function ProductFilters({
         value={sort}
         onChange={(event) => onSortChange(event.target.value as SortOption)}
         aria-label="Sort products"
-        className={`${inputStyles} border-border sm:w-56`}
+        className={`${inputStyles} border-border sm:w-56 cursor-pointer`}
       >
         {sortOptions.map((option) => (
           <option key={option.value} value={option.value}>

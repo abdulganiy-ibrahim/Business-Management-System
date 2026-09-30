@@ -1,5 +1,5 @@
 import { FiEdit2 } from "react-icons/fi";
-import type { Product } from "@/types/ProductType";
+import type { Product } from "@/types/productType";
 import { iconButton } from "./productStyles";
 
 // TODO: set your currency code (e.g. "USD", "NGN", "GBP")
@@ -42,7 +42,7 @@ export default function ProductCard({ product, onEdit }: ProductCardProps) {
           type="button"
           onClick={() => onEdit(product)}
           aria-label={`Edit ${product.name}`}
-          className={iconButton}
+          className={`${iconButton} cursor-pointer`}
         >
           <FiEdit2 className="size-4" />
         </button>

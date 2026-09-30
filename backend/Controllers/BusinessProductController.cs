@@ -28,7 +28,10 @@ public class BusinessProductController : ControllerBase
       return Ok(productId);
     } catch (KeyNotFoundException ex)
     {
-      return NotFound(ex.Message);
+      return NotFound(new 
+      {
+        message = ex.Message
+      });
     }
   }
 

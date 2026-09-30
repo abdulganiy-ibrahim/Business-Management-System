@@ -140,14 +140,14 @@ export default function ProductForm({
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className={`${secondaryButton} w-full sm:w-auto`}
+          className={`${secondaryButton} w-full sm:w-auto cursor-pointer`}
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`${primaryButton} w-full sm:w-auto`}
+          className={`${primaryButton} w-full sm:w-auto cursor-pointer`}
         >
           {isSubmitting ? "Saving..." : submitLabel}
         </button>

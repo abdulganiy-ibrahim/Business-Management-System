@@ -45,7 +45,7 @@ export default function ProductsView({
         <button
           type="button"
           onClick={() => setIsCreateOpen(true)}
-          className={`${primaryButton} w-full sm:w-auto`}
+          className={`${primaryButton} w-full sm:w-auto cursor-pointer`}
         >
           <FiPlus className="size-4" />
           Add product
