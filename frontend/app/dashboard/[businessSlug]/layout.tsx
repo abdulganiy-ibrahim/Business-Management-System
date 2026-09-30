@@ -1,14 +1,14 @@
-import { Header } from "@/components/business-dashboard";
+import { DashboardShell } from "@/components/business-dashboard";
 import { getServerApi } from "@/lib/api/serverApi";
 import { getCurrentUser } from "@/lib/data/userData";
 import { getBusinessBySlug, getBusinesses } from "@/lib/data/BusinessData";
 
 type DashboardLayoutProps = {
-  children: React.ReactNode
+  children: React.ReactNode;
   params: Promise<{
-    businessSlug: string
-  }>
-}
+    businessSlug: string;
+  }>;
+};
 
 export default async function DashboardLayout({ children, params }: DashboardLayoutProps) {
   const api = await getServerApi();
@@ -20,17 +20,12 @@ export default async function DashboardLayout({ children, params }: DashboardLay
   const activeBusiness = await getBusinessBySlug(api, businessSlug);
 
   return (
-    <div className="min-h-screen">
-      
-      <>
-        <Header 
-          businesses={allBusinesses} 
-          activeBusiness={activeBusiness}
-          user={currentUser} 
-        />
-      </>
-
+    <DashboardShell
+      businesses={allBusinesses}
+      activeBusiness={activeBusiness}
+      user={currentUser}
+    >
       {children}
-    </div>
-  )
+    </DashboardShell>
+  );
 }
