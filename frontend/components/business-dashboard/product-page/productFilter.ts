@@ -1,4 +1,4 @@
-import type { Product } from "@/types/ProductType";
+import type { Product } from "@/types/productType";
 
 export type SortOption =
   | "newest"

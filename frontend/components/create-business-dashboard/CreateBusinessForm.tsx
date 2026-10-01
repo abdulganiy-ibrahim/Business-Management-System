@@ -1,4 +1,5 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from "react";
 import { FiPlus } from "react-icons/fi";
 import { Label, Input } from "../ui/FormInput";
@@ -13,10 +14,11 @@ type BusinessFormErrors = Partial<Record<keyof BusinessFormValues, string>>;
 
 interface CreateBusinessFormProps {
   compact?: boolean;
-  onBusinessCreated: () => void;
 }
 
-export default function CreateBusinessForm({ compact = false, onBusinessCreated }: CreateBusinessFormProps) {
+export default function CreateBusinessForm({ compact = false }: CreateBusinessFormProps) {
+  const router = useRouter();
+
   const [expanded, setExpanded] = useState(!compact);
   const [values, setValues] = useState<BusinessFormValues>({
     name: "",
@@ -60,7 +62,7 @@ export default function CreateBusinessForm({ compact = false, onBusinessCreated 
     try {
       await createBusiness(browserApi, values);
 
-      await onBusinessCreated();
+      router.refresh();
 
       toast.success("Congratulations! Your business has been created");
     } catch (error) {
@@ -79,7 +81,7 @@ export default function CreateBusinessForm({ compact = false, onBusinessCreated 
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border-strong bg-surface py-4 text-sm font-medium text-muted hover:border-primary hover:text-primary"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border-strong bg-surface py-4 text-sm font-medium text-muted cursor-pointer hover:border-primary hover:text-primary"
       >
         <FiPlus size={16} />
         Add another business
@@ -139,7 +141,7 @@ export default function CreateBusinessForm({ compact = false, onBusinessCreated 
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-70 transition-all duration-300"
+            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white cursor-pointer hover:bg-primary-hover disabled:opacity-70 transition-all duration-300"
           >
             {submitting ? "Creating…" : "Create business"}
           </button>
@@ -147,7 +149,7 @@ export default function CreateBusinessForm({ compact = false, onBusinessCreated 
             <button
               type="button"
               onClick={() => setExpanded(false)}
-              className="text-sm text-muted hover:text-foreground"
+              className="text-sm text-muted hover:text-foreground cursor-pointer"
             >
               Cancel
             </button>

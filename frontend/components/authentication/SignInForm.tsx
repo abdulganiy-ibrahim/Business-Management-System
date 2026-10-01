@@ -90,7 +90,7 @@ export default function SignInForm() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2.5 top-9 text-muted-foreground hover:text-primary transition-colors"
+            className="absolute right-2.5 top-9 text-muted-foreground cursor-pointer hover:text-primary transition-colors"
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
@@ -102,7 +102,7 @@ export default function SignInForm() {
           <button
             type="submit" 
             disabled={isLoading}
-            className="bg-primary text-white w-full py-2.5 rounded-full hover:bg-p-bg-hover transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="bg-primary text-white w-full py-2.5 rounded-full cursor-pointer hover:bg-p-bg-hover transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Signing in...' : 'Sign in'}
           </button>

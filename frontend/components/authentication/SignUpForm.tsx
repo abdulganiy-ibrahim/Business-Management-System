@@ -122,7 +122,7 @@ export default function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
           <button
             type="submit" 
             disabled={isLoading}
-            className="bg-primary text-white w-full py-2.5 rounded-full hover:bg-p-bg-hover transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="bg-primary text-white w-full py-2.5 rounded-full cursor-pointer hover:bg-p-bg-hover transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Creating account...' : 'Create Account'}
           </button>
@@ -134,7 +134,7 @@ export default function SignUpForm({ onSwitchToLogin }: SignUpFormProps) {
           Already have an account?{' '}
           <button
             onClick={onSwitchToLogin}
-            className="text-primary font-medium hover:underline"
+            className="text-primary font-medium cursor-pointer hover:underline"
           >
             Log in
           </button>

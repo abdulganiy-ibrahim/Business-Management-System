@@ -10,29 +10,11 @@ import { toast } from "sonner";
 
 interface OnboardingDashboardProps {
   userName?: string;
+  businesses: Business[];
 }
 
 export default function OnboardingDashboard({
-  userName }: OnboardingDashboardProps) {
-  const [businesses, setBusinesses] = useState<Business[]>([]);
-
-  const fetchBusinesses = async () => {
-    try {
-      const data = await getBusinesses(browserApi);
-
-      setBusinesses(data);
-    } catch (error) {
-      toast.error(
-        error instanceof Error ?
-        error.message :
-        'Failed to fetch Businesses'
-      );
-    } 
-  }
-
-  useEffect(() => {
-    fetchBusinesses();
-  }, []);
+  userName, businesses }: OnboardingDashboardProps) {
   
   const hasBusinesses = businesses.length > 0;
 
@@ -51,12 +33,12 @@ export default function OnboardingDashboard({
             </section>
 
             <section>
-              <CreateBusinessForm compact onBusinessCreated={fetchBusinesses} />
+              <CreateBusinessForm compact />
             </section>
           </div>
         ) : (
           <div className="mx-auto max-w-md">
-            <CreateBusinessForm onBusinessCreated={fetchBusinesses} />
+            <CreateBusinessForm />
           </div>
         )}
       </div>

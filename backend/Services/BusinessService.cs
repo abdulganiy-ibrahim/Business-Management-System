@@ -59,9 +59,16 @@ public class BusinessService
     return business;
   }
 
-  public void DeleteById(Guid id)
+  public void DeleteById(Guid userId, Guid businessId)
   {
-    _businessRepository.DeleteById(id);
+    var business = _businessRepository.GetById(userId, businessId);
+
+    if (business is null)
+    {
+      throw new KeyNotFoundException("Business doesn't exist or not belong to you");
+    }
+
+    _businessRepository.DeleteById(businessId);
 
     return;
   }

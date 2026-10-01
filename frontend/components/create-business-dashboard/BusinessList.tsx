@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import { FiBriefcase, FiEdit2, FiTrash2, FiCheck, FiX, FiArrowRight } from "react-icons/fi";
@@ -12,6 +13,8 @@ import { toast } from "sonner";
 import { browserApi } from "@/lib/api/browserApi";
 
 export default function BusinessList({ businesses }: { businesses: Business[] }) {
+  const router = useRouter();
+
   const [items, setItems] = useState<Business[]>(businesses);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState<BusinessDraft>({

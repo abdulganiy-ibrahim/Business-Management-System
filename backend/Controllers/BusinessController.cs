@@ -53,4 +53,22 @@ public class BusinessController : ControllerBase
       return Unauthorized(ex.Message);
     }
   }
+
+  [HttpDelete("{businessId}")]
+  public IActionResult DeleteById(Guid businessId)
+  {
+    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
+
+    try
+    {
+      _businessService.DeleteById(user.Id, businessId);
+      return NoContent();
+    } catch (KeyNotFoundException ex)
+    {
+      return NotFound(new
+      {
+        message = ex.Message
+      });
+    }
+  }
 }

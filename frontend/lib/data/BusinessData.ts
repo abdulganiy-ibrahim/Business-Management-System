@@ -29,7 +29,7 @@ export async function editBusinessById(api: AxiosInstance, id: string, values: B
 }
 
 export async function deleteBusinessById(api: AxiosInstance, id: string) {
-  const res = await api(`api/businesses/${id}`, {
+  const res = await api.delete(`api/businesses/${id}`, {
     method: 'DELETE'
   });
 
