@@ -65,4 +65,22 @@ public class SaleService
 
     return await _saleRepository.CreateSaleWithItemsAsync(sale, saleItems);
   }
+
+  // Get sales by businessId Async Method
+  public async Task<List<SaleRecord>> GetSalesByBusinessIdAsync(Guid businessId)
+  {
+    return await _saleRepository.GetSalesByBusinessIdAsync(businessId);
+  }
+
+  // Get sale by saleId async method
+  public async Task<SaleRecord?> GetSaleByIdAsync(int saleId)
+  {
+    return await _saleRepository.GetSaleByIdAsync(saleId);
+  }
+
+  // Get sale items by saleId async method
+  public async Task<List<SaleItem>> GetSaleItemsBySaleIdAsync(int saleId)
+  {
+    return await _saleRepository.GetSaleItemsBySaleIdAsync(saleId);
+  }
 }
