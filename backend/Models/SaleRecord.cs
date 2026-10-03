@@ -12,6 +12,14 @@ public record CreateSaleItemRequest(
   int Quantity
 );
 
+public record AddSaleRecord(
+  Guid BusinessId,
+  string? CustomerName,
+  string? CustomerNumber,
+  decimal TotalAmount,
+  decimal PaidAmount
+);
+
 public record SaleRecord(
   int Id,
   Guid BusinessId,

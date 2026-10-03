@@ -15,70 +15,37 @@ public class ProductService
   }
 
   // Create product method
-  public int Create(Guid userId, Guid businessId, CreateProductRecord newProduct)
+  public int Create(Guid businessId, CreateProductRecord newProduct)
   {
-    var business = _businessRepository.GetById(userId, businessId);
-
-    if (business is null)
-    {
-      throw new KeyNotFoundException("Business does not exist or does not belong to you");
-    }
-
     var productId = _productRepository.Create(businessId, newProduct);
 
     return productId;
   }
 
-  public List<ProductRecord> GetByBusinessId(Guid userId, Guid businessId)
+  public List<ProductRecord> GetByBusinessId(Guid businessId)
   {
-    var business = _businessRepository.GetById(userId, businessId);
-
-    if (business is null)
-    {
-      throw new KeyNotFoundException("Business does not exist or does not belong to you");
-    }
-
-    var products = _productRepository.GetByBusinessId(business.Id);
+    var products = _productRepository.GetByBusinessId(businessId);
 
     return products;
   }
 
-  public ProductRecord? GetById(Guid userId, Guid businessId, int productId)
+  public ProductRecord? GetById(int productId)
   {
-    var business = _businessRepository.GetById(userId, businessId);
-
-    if (business is null)
-    {
-      throw new KeyNotFoundException("Business does not exist or does not belong to you");
-    }
 
     var product = _productRepository.GetById(productId);
 
     return product;
   }
 
-  public bool Update(Guid userId, Guid businessId, int productId, UpdateProductRecord request)
-{
-    var business = _businessRepository.GetById(userId, businessId);
-
-    if (business is null)
-    {
-      throw new KeyNotFoundException("Business does not exist or does not belong to you.");
-    }
+  public bool Update(int productId, UpdateProductRecord request)
+  {
 
     return _productRepository.Update(productId, request);
-}
+  }
 
   // Delete by productId;
-  public void DeleteById(Guid userId, Guid businessId, int productId)
+  public void DeleteById(int productId)
   {
-    var business = _businessRepository.GetById(userId, businessId);
-
-    if (business is null)
-    {
-      throw new KeyNotFoundException("Business does not exist or does not belong to you");
-    }
-
     _productRepository.DeleteById(productId);
 
     return;

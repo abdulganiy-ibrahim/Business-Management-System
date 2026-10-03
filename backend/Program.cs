@@ -72,6 +72,7 @@ app.UseAuthorization();
 
 // Register Middleware.
 app.UseMiddleware<UserExistsMiddleware>();
+app.UseMiddleware<BusinessAccessMiddleware>();
 
 app.MapControllers();
 

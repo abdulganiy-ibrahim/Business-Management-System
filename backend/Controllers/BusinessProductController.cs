@@ -18,95 +18,52 @@ public class BusinessProductController : ControllerBase
   }
 
   [HttpPost]
-  public IActionResult Create(Guid businessId, CreateProductRecord newProduct)
+  public IActionResult Create(CreateProductRecord newProduct)
   {
-    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
+    var business = (BusinessRecord)HttpContext.Items["Business"]!;
 
-    try
-    {
-      var productId = _productService.Create(user.Id, businessId, newProduct);
-      return Ok(productId);
-    } catch (KeyNotFoundException ex)
-    {
-      return NotFound(new 
-      {
-        message = ex.Message
-      });
-    }
+    var productId = _productService.Create(business.Id, newProduct);
+    return Ok(productId);
   }
 
   [HttpGet]
-  public IActionResult GetByBusinessId(Guid businessId)
+  public IActionResult GetByBusinessId()
   {
-    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
+    var business = (BusinessRecord)HttpContext.Items["Business"]!;
 
-    try
-    {
-      var products = _productService.GetByBusinessId(user.Id, businessId);
-      return Ok(products); 
-    } catch (KeyNotFoundException ex)
-    {
-      return NotFound(ex.Message);
-    }
+    var products = _productService.GetByBusinessId(business.Id);
+    return Ok(products); 
   }
 
   [HttpGet("{productId}")]
-  public IActionResult GetById(Guid businessId, int productId)
+  public IActionResult GetById(int productId)
   {
-    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
-
-    try
-    {
-      var product = _productService.GetById(user.Id, businessId, productId);
-      return Ok(product);
-    } catch (KeyNotFoundException ex)
-    {
-      return NotFound(ex.Message);
-    }
+    var product = _productService.GetById(productId);
+    return Ok(product);
   }
 
   [HttpPatch("{productId}")]
   [Authorize]
-  public IActionResult Update(Guid businessId, int productId, UpdateProductRecord request)
+  public IActionResult Update(int productId, UpdateProductRecord request)
   {
-    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
+    var updated = _productService.Update(productId, request);
 
-    try
-    {
-      var updated = _productService.Update(user.Id, businessId, productId, request);
-
-      if (!updated)
-      {
-          return NotFound(new
-          {
-            message = "Product not found or nothing to update."
-          });
-      }
-
-      return NoContent();
-    }
-    catch (KeyNotFoundException ex)
+    if (!updated)
     {
         return NotFound(new
         {
-          message = ex.Message
+          message = "Product not found or nothing to update."
         });
     }
+
+    return NoContent();
   }
 
   [HttpDelete("{productId}")]
   public IActionResult DeleteById(Guid businessId, int productId)
   {
-    var user = (UserRecord)HttpContext.Items["CurrentUser"]!;
+    _productService.DeleteById(productId);
 
-    try
-    {
-      _productService.DeleteById(user.Id, businessId, productId);
-
-      return NoContent();
-    } catch (KeyNotFoundException ex)
-    {
-      return NotFound(ex.Message);
-    }
+    return NoContent();
   }
 }
