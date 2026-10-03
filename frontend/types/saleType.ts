@@ -7,7 +7,7 @@ export interface CreateSaleRequest {
   customerName?: string;
   customerNumber?: string;
   saleItems: CreateSaleItemRequest[];
-  paidAmount: number;
+  amountPaid: number;
 }
 
 export interface Sale {

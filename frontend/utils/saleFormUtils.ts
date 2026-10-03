@@ -14,6 +14,7 @@ export type SaleFormValues = {
   customerName: string;
   customerNumber: string;
   rows: SaleRow[];
+  paidAmount: string; // text while typing, a number in the payload
 };
 
 export type SaleRowErrors = { productId?: string; quantity?: string };
@@ -68,12 +69,42 @@ export function validateRows(rows: SaleRow[]): SaleRowErrorMap {
   return errors;
 }
 
+// ---------- Payment ----------
+
+// Returns an error message, or undefined when the amount is fine.
+// 0 is allowed (nothing paid yet), but an empty box is not (probably forgotten).
+export function validatePaidAmount(
+  paidAmount: string,
+  total: number,
+): string | undefined {
+  if (paidAmount.trim() === "") {
+    return "Enter the amount paid (0 if nothing was paid).";
+  }
+
+  const paid = Number(paidAmount);
+  if (Number.isNaN(paid) || paid < 0) {
+    return "Enter a valid amount (0 or more).";
+  }
+
+  // Compare in whole cents to avoid decimal rounding surprises
+  if (Math.round(paid * 100) > Math.round(total * 100)) {
+    return "Amount paid can't be more than the total.";
+  }
+
+  return undefined;
+}
+
+// What the customer still owes (0 while the amount is empty or invalid)
+export function calculateBalance(total: number, paidAmount: string) {
+  const paid = Number(paidAmount);
+  if (paidAmount.trim() === "" || Number.isNaN(paid) || paid < 0) return 0;
+
+  return Math.max(0, Math.round((total - paid) * 100) / 100);
+}
+
 // ---------- Payload (what the backend receives) ----------
 
-export function buildSalePayload(
-  values: SaleFormValues,
-  total: number,
-): CreateSaleRequest {
+export function buildSalePayload(values: SaleFormValues): CreateSaleRequest {
   return {
     customerName: values.customerName.trim() || undefined,
     customerNumber: values.customerNumber.trim() || undefined,
@@ -81,8 +112,6 @@ export function buildSalePayload(
       productId: Number(row.productId), // the id, not the product name
       quantity: Number(row.quantity),
     })),
-    // TODO: when the "amount paid" field is added, send its value here.
-    // Until then every sale is recorded as fully paid.
-    paidAmount: total,
+    amountPaid: Math.round(Number(values.paidAmount) * 100) / 100,
   };
 }

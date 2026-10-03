@@ -5,8 +5,10 @@ import type { Product } from "@/types/productType";
 import type { CreateSaleRequest } from "@/types/saleType";
 import {
   buildSalePayload,
+  calculateBalance,
   calculateTotal,
   createEmptyRow,
+  validatePaidAmount,
   validateRows,
   type SaleRow,
   type SaleRowErrorMap,
@@ -28,6 +30,8 @@ export function useSaleForm({ products, onSubmit }: UseSaleFormOptions) {
   });
   const [rows, setRows] = useState<SaleRow[]>(() => [createEmptyRow()]);
   const [rowErrors, setRowErrors] = useState<SaleRowErrorMap>({});
+  const [paidAmount, setPaidAmountValue] = useState("");
+  const [paidAmountError, setPaidAmountError] = useState("");
   const [serverError, setServerError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,6 +42,7 @@ export function useSaleForm({ products, onSubmit }: UseSaleFormOptions) {
   );
 
   const total = calculateTotal(rows, productsById);
+  const balanceDue = calculateBalance(total, paidAmount); // what the customer still owes
 
   // ---------- Changing the form ----------
 
@@ -68,20 +73,30 @@ export function useSaleForm({ products, onSubmit }: UseSaleFormOptions) {
         : previous,
     );
 
+  // Typing clears the error; "Paid in full" fills in the total
+  const setPaidAmount = (value: string) => {
+    setPaidAmountValue(value);
+    setPaidAmountError("");
+  };
+
+  const payInFull = () => setPaidAmount(String(total));
+
   // ---------- Submitting ----------
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const errors = validateRows(rows);
+    const paidError = validatePaidAmount(paidAmount, total) ?? "";
     setRowErrors(errors);
-    if (Object.keys(errors).length > 0) return;
+    setPaidAmountError(paidError);
+    if (Object.keys(errors).length > 0 || paidError) return;
 
     setIsSubmitting(true);
     setServerError("");
 
     try {
-      await onSubmit(buildSalePayload({ ...customer, rows }, total));
+      await onSubmit(buildSalePayload({ ...customer, rows, paidAmount }));
     } catch (error) {
       setServerError(
         error instanceof Error
@@ -99,12 +114,17 @@ export function useSaleForm({ products, onSubmit }: UseSaleFormOptions) {
     rowErrors,
     productsById,
     total,
+    paidAmount,
+    paidAmountError,
+    balanceDue,
     serverError,
     isSubmitting,
     setCustomerField,
     updateRow,
     addRow,
     removeRow,
+    setPaidAmount,
+    payInFull,
     handleSubmit,
   };
 }

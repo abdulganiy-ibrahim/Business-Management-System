@@ -1,9 +1,14 @@
 "use client";
 
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import SelectField from "../../ui/SelectField";
-import TextField from "../../ui/TextField";
-import { iconButton, primaryButton, secondaryButton } from "@/components/ui/uiStyles";
+import SelectField from "@/components/ui/SelectField";
+import TextField from "@/components/ui/TextField";
+import {
+  focusRing,
+  iconButton,
+  primaryButton,
+  secondaryButton,
+} from "@/components/ui/uiStyles";
 import { formatPrice } from "./format";
 import type { Product } from "@/types/productType";
 import { calculateRowTotal } from "@/utils/saleFormUtils";
@@ -22,12 +27,17 @@ export default function SaleForm({ form, products, onCancel }: SaleFormProps) {
     rowErrors,
     productsById,
     total,
+    paidAmount,
+    paidAmountError,
+    balanceDue,
     serverError,
     isSubmitting,
     setCustomerField,
     updateRow,
     addRow,
     removeRow,
+    setPaidAmount,
+    payInFull,
     handleSubmit,
   } = form;
 
@@ -142,12 +152,48 @@ export default function SaleForm({ form, products, onCancel }: SaleFormProps) {
           />
         </div>
 
-        {/* ---------- Total ---------- */}
-        <div className="flex items-center justify-between rounded-xl bg-sunken px-4 py-3">
-          <span className="text-sm text-muted">Total</span>
-          <span className="text-lg font-semibold text-foreground">
-            {formatPrice(total)}
-          </span>
+        {/* ---------- Total and payment ---------- */}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between rounded-xl bg-sunken px-4 py-3">
+            <span className="text-sm text-muted">Total</span>
+            <span className="text-lg font-semibold text-foreground">
+              {formatPrice(total)}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <TextField
+              id="sale-paid-amount"
+              label="Amount paid"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step="any"
+              placeholder="0.00"
+              value={paidAmount}
+              onChange={setPaidAmount}
+              error={paidAmountError}
+            />
+
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <button
+                type="button"
+                onClick={payInFull}
+                className={`rounded-md font-medium text-primary cursor-pointer hover:underline ${focusRing}`}
+              >
+                Paid in full
+              </button>
+
+              {balanceDue > 0 && (
+                <p className="text-muted">
+                  Balance due:{" "}
+                  <span className="font-medium text-danger">
+                    {formatPrice(balanceDue)}
+                  </span>
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       </fieldset>
 
@@ -166,14 +212,14 @@ export default function SaleForm({ form, products, onCancel }: SaleFormProps) {
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className={`${secondaryButton} w-full sm:w-auto`}
+          className={`${secondaryButton} w-full sm:w-auto cursor-pointer`}
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`${primaryButton} w-full sm:w-auto`}
+          className={`${primaryButton} w-full sm:w-auto cursor-pointer`}
         >
           {isSubmitting ? "Saving..." : "Create sale"}
         </button>
