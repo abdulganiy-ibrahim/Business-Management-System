@@ -1,6 +1,7 @@
-using BusinessManagementSystem.Models;
+using Npgsql;
+using BusinessManagementApi.Models;
 
-namespace BusinessManagementSystem.Data;
+namespace BusinessManagementApi.Data;
 
 public class SaleRepository
 {
@@ -11,21 +12,48 @@ public class SaleRepository
     _connectionString = connectionString;
   }
 
-  public int AddSale(SaleRecord newSale)
+  public async Task<int> CreateSaleWithItemsAsync(AddSaleRecord sale, IReadOnlyList<AddSaleItemRecord> items)
   {
-    using var conn = new Npgsql.NpgsqlConnection(_connectionString);
-    conn.Open();
+    await using var conn = new NpgsqlConnection(_connectionString);
+    await conn.OpenAsync();
+    await using var transaction = await conn.BeginTransactionAsync();
 
-    using var cmd = new Npgsql.NpgsqlCommand(
-      "INSERT INTO sales (business_id, customer_name, customer_number, total_amount, paid_amount) VALUES (@businessId, @customerName, @customerNumber, @totalAmount, @paidAmount) RETURNING id",
-      conn
-    );
-    cmd.Parameters.AddWithValue("@businessId", newSale.BusinessId);
-    cmd.Parameters.AddWithValue("@customerName", newSale.CustomerName ?? (object)DBNull.Value);
-    cmd.Parameters.AddWithValue("@customerNumber", newSale.CustomerNumber ?? (object)DBNull.Value);
-    cmd.Parameters.AddWithValue("@totalAmount", newSale.TotalAmount);
-    cmd.Parameters.AddWithValue("@paidAmount", newSale.PaidAmount);
+    var saleSql = @"
+      INSERT INTO sales (business_id, customer_name, customer_number, total_amount, paid_amount)
+      VALUES (@businessId, @customerName, @customerNumber, @totalAmount, @paidAmount)
+      RETURNING id;
+    ";
 
-    return (int)cmd.ExecuteScalar()!;
+    int saleId;
+    await using (var saleCmd = new NpgsqlCommand(saleSql, conn, transaction))
+    {
+      saleCmd.Parameters.AddWithValue("@businessId", sale.BusinessId);
+      saleCmd.Parameters.AddWithValue("@customerName", sale.CustomerName ?? (object)DBNull.Value);
+      saleCmd.Parameters.AddWithValue("@customerNumber", sale.CustomerNumber ?? (object)DBNull.Value);
+      saleCmd.Parameters.AddWithValue("@totalAmount", sale.TotalAmount);
+      saleCmd.Parameters.AddWithValue("@paidAmount", sale.PaidAmount);
+
+      saleId = Convert.ToInt32(await saleCmd.ExecuteScalarAsync());
+    }
+
+    var itemSql = @"
+      INSERT INTO sale_items (sale_id, product_id, quantity, unit_price, total_price)
+      VALUES (@saleId, @productId, @quantity, @unitPrice, @totalPrice);
+    ";
+
+    foreach (var item in items)
+    {
+      await using var itemCmd = new NpgsqlCommand(itemSql, conn, transaction);
+      itemCmd.Parameters.AddWithValue("@saleId", saleId);
+      itemCmd.Parameters.AddWithValue("@productId", item.ProductId);
+      itemCmd.Parameters.AddWithValue("@quantity", item.Quantity);
+      itemCmd.Parameters.AddWithValue("@unitPrice", item.UnitPrice);
+      itemCmd.Parameters.AddWithValue("@totalPrice", item.TotalPrice);
+
+      await itemCmd.ExecuteNonQueryAsync();
+    }
+
+    await transaction.CommitAsync();
+    return saleId;
   }
 }

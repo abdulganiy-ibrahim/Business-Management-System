@@ -1,15 +1,23 @@
-namespace BusinessManagementSystem.Models;
+namespace BusinessManagementApi.Models;
 
 public record CreateSaleRequest(
-  Guid BusinessId,
   string? CustomerName,
   string? CustomerNumber,
-  IReadOnlyList<CreateSaleItemRequest> SaleItems
+  IReadOnlyList<CreateSaleItemRequest> SaleItems,
+  decimal PaidAmount
 );
 
 public record CreateSaleItemRequest(
   int ProductId,
   int Quantity
+);
+
+public record AddSaleItemRecord(
+  int SaleId,
+  int ProductId,
+  int Quantity,
+  decimal UnitPrice,
+  decimal TotalPrice
 );
 
 public record AddSaleRecord(
