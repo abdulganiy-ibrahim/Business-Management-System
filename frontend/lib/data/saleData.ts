@@ -7,7 +7,7 @@ export async function createSale(
   businessId: string,
   newSale: CreateSaleRequest
 ) {
-  const res = await api.post(`/api/businesses/${businessId}/sales`, newSale);
+  const res = await api.post(`/api/business/${businessId}/sales`, newSale);
 
   return res.data;
 }
@@ -17,7 +17,7 @@ export async function getSalesByBusinessId(
   api: AxiosInstance,
   businessId: string
 ): Promise<Sale[]> {
-  const res = await api.get<Sale[]>(`/api/businesses/${businessId}/sales`);
+  const res = await api.get<Sale[]>(`/api/business/${businessId}/sales`);
 
   return res.data;
 }
@@ -28,7 +28,7 @@ export async function getSaleById(
   businessId: string,
   saleId: number
 ): Promise<Sale> {
-  const res = await api.get<Sale>(`/api/businesses/${businessId}/sales/${saleId}`);
+  const res = await api.get<Sale>(`/api/business/${businessId}/sales/${saleId}`);
 
   return res.data;
 }
@@ -39,7 +39,7 @@ export async function getSaleItemsBySaleId(
   businessId: string,
   saleId: number
 ): Promise<SaleItem[]> {
-  const res = await api.get<SaleItem[]>(`/api/businesses/${businessId}/sales/${saleId}/items`);
+  const res = await api.get<SaleItem[]>(`/api/business/${businessId}/sales/${saleId}/items`);
 
   return res.data;
 }
