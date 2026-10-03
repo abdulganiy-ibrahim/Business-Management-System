@@ -21,9 +21,9 @@ public class SaleService
         throw new ArgumentException("Sale must contain at least one item.");
     }
 
-    if (newSale.PaidAmount < 0)
+    if (newSale.AmountPaid < 0)
     {
-        throw new ArgumentException("Paid amount cannot be negative.");
+        throw new ArgumentException("Amount paid cannot be negative.");
     }
 
     var saleItems = new List<AddSaleItemRecord>();
@@ -50,9 +50,9 @@ public class SaleService
       saleItems.Add(new AddSaleItemRecord(0, item.ProductId, item.Quantity, product.SellingPrice, totalPrice));
     }
 
-    if (newSale.PaidAmount > totalAmount)
+    if (newSale.AmountPaid > totalAmount)
     {
-      throw new ArgumentException("Paid amount cannot be greater than the total amount.");
+      throw new ArgumentException("Amount paid cannot be greater than the total amount.");
     }
 
     var sale = new AddSaleRecord(
@@ -60,7 +60,7 @@ public class SaleService
       newSale.CustomerName,
       newSale.CustomerNumber,
       totalAmount,
-      newSale.PaidAmount
+      newSale.AmountPaid
     );
 
     return await _saleRepository.CreateSaleWithItemsAsync(sale, saleItems);

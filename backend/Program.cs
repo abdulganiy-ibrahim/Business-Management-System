@@ -14,11 +14,13 @@ var connectionString = builder.Configuration.GetConnectionString("BusinessManage
 builder.Services.AddScoped<UserRepository>(sp => new UserRepository(connectionString));
 builder.Services.AddScoped<BusinessRepository>(sp => new BusinessRepository(connectionString));
 builder.Services.AddScoped<ProductRepository>(sp => new ProductRepository(connectionString));
+builder.Services.AddScoped<SaleRepository>(sp => new SaleRepository(connectionString));
 
 // Register Services with the DI Container
 builder.Services.AddScoped<BusinessService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<SaleService>();
 
 // Add services to the container.
 builder.Services.AddControllers();

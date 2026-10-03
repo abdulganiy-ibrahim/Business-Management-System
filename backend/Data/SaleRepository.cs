@@ -19,8 +19,8 @@ public class SaleRepository
     await using var transaction = await conn.BeginTransactionAsync();
 
     var saleSql = @"
-      INSERT INTO sales (business_id, customer_name, customer_number, total_amount, paid_amount)
-      VALUES (@businessId, @customerName, @customerNumber, @totalAmount, @paidAmount)
+      INSERT INTO sales (business_id, customer_name, customer_number, total_amount, amount_paid)
+      VALUES (@businessId, @customerName, @customerNumber, @totalAmount, @amountPaid)
       RETURNING id;
     ";
 
@@ -31,7 +31,7 @@ public class SaleRepository
       saleCmd.Parameters.AddWithValue("@customerName", sale.CustomerName ?? (object)DBNull.Value);
       saleCmd.Parameters.AddWithValue("@customerNumber", sale.CustomerNumber ?? (object)DBNull.Value);
       saleCmd.Parameters.AddWithValue("@totalAmount", sale.TotalAmount);
-      saleCmd.Parameters.AddWithValue("@paidAmount", sale.PaidAmount);
+      saleCmd.Parameters.AddWithValue("@amountPaid", sale.AmountPaid);
 
       saleId = Convert.ToInt32(await saleCmd.ExecuteScalarAsync());
     }
@@ -66,7 +66,7 @@ public class SaleRepository
     await conn.OpenAsync();
 
     var sqlCommand = @"
-      SELECT id, business_id, customer_name, customer_number, total_amount, paid_amount, created_at
+      SELECT id, business_id, customer_name, customer_number, total_amount, amount_paid, created_at
       FROM sales
       WHERE business_id = @businessId;
     ";
@@ -98,7 +98,7 @@ public class SaleRepository
     await conn.OpenAsync();
 
     var sqlCommand = @"
-      SELECT id, business_id, customer_name, customer_number, total_amount, paid_amount, created_at
+      SELECT id, business_id, customer_name, customer_number, total_amount, amount_paid, created_at
       FROM sales
       WHERE id = @saleId;
     ";

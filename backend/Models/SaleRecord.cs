@@ -4,7 +4,7 @@ public record CreateSaleRequest(
   string? CustomerName,
   string? CustomerNumber,
   IReadOnlyList<CreateSaleItemRequest> SaleItems,
-  decimal PaidAmount
+  decimal AmountPaid
 );
 
 public record CreateSaleItemRequest(
@@ -25,7 +25,7 @@ public record AddSaleRecord(
   string? CustomerName,
   string? CustomerNumber,
   decimal TotalAmount,
-  decimal PaidAmount
+  decimal AmountPaid
 );
 
 public record SaleRecord(
@@ -34,7 +34,7 @@ public record SaleRecord(
   string? CustomerName,
   string? CustomerNumber,
   decimal TotalAmount,
-  decimal PaidAmount,
+  decimal AmountPaid,
   DateTime CreatedAt
 );
 
