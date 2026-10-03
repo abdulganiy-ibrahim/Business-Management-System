@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using BusinessManagementApi.Data;
-using BusinessManagementApi.Service;
-using BusinessManagementApi.Middleware;
 using BusinessManagementApi.Services;
+using BusinessManagementApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

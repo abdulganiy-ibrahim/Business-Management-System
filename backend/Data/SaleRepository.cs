@@ -1,4 +1,4 @@
-using BusinessManagementSystem.Model;
+using BusinessManagementSystem.Models;
 
 namespace BusinessManagementSystem.Data;
 

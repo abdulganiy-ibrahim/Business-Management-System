@@ -1,8 +1,8 @@
-using BusinessManagementApi.Service;
+using BusinessManagementApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BusinessManagementSystem.Controller;
+namespace BusinessManagementSystem.Controllers;
 
 [ApiController]
 [Route("api/business/{businessId}/sales")]

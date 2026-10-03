@@ -1,6 +1,6 @@
 using BusinessManagementSystem.Data;
 
-namespace BusinessManagementSystem.Service;
+namespace BusinessManagementSystem.Services;
 
 public class SaleService
 {

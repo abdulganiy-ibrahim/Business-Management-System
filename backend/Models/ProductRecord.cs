@@ -1,4 +1,4 @@
-namespace BusinessManagementApi.Model;
+namespace BusinessManagementApi.Models;
 
 public record CreateProductRecord(
   string Name,

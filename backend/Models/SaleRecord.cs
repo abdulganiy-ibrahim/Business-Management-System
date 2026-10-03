@@ -1,4 +1,4 @@
-namespace BusinessManagementSystem.Model;
+namespace BusinessManagementSystem.Models;
 
 public record CreateSaleRequest(
   Guid BusinessId,

@@ -1,9 +1,9 @@
-using BusinessManagementApi.Model;
+using BusinessManagementApi.Models;
 using BusinessManagementApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BusinessManagementApi.Controller;
+namespace BusinessManagementApi.Controllers;
 
 [ApiController]
 [Route("api/business/{businessId}/products")]
@@ -60,7 +60,7 @@ public class BusinessProductController : ControllerBase
   }
 
   [HttpDelete("{productId}")]
-  public IActionResult DeleteById(Guid businessId, int productId)
+  public IActionResult DeleteById(int productId)
   {
     _productService.DeleteById(productId);
 

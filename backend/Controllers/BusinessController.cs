@@ -1,7 +1,7 @@
-namespace BusinessManagementApi.Controller;
+namespace BusinessManagementApi.Controllers;
 
-using BusinessManagementApi.Service;
-using BusinessManagementApi.Model;
+using BusinessManagementApi.Services;
+using BusinessManagementApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

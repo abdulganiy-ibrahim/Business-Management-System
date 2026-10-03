@@ -1,7 +1,7 @@
-namespace BusinessManagementApi.Service;
+namespace BusinessManagementApi.Services;
 
 using BusinessManagementApi.Data;
-using BusinessManagementApi.Model;
+using BusinessManagementApi.Models;
 
 public class BusinessService
 {

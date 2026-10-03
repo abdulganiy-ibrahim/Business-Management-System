@@ -1,9 +1,9 @@
-using BusinessManagementApi.Model;
+using BusinessManagementApi.Models;
 using BusinessManagementApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BusinessManagementApi.Controller;
+namespace BusinessManagementApi.Controllers;
 
 [ApiController]
 [Route("api/products")]

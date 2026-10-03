@@ -1,4 +1,4 @@
-namespace BusinessManagementApi.Model;
+namespace BusinessManagementApi.Models;
 
 public record CreateBusinessRecord(string Name, string Category, string PhoneNumber);
 

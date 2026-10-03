@@ -1,8 +1,8 @@
-using BusinessManagementApi.Model;
-using BusinessManagementApi.Service;
+using BusinessManagementApi.Models;
+using BusinessManagementApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BusinessManagementApi.Controller;
+namespace BusinessManagementApi.Controllers;
 
 [ApiController]
 [Route("api/users")]

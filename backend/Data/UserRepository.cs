@@ -1,7 +1,7 @@
 namespace BusinessManagementApi.Data;
 
 using Npgsql;
-using BusinessManagementApi.Model;
+using BusinessManagementApi.Models;
 
 public class UserRepository
 {

@@ -1,5 +1,5 @@
 using BusinessManagementApi.Data;
-using BusinessManagementApi.Model;
+using BusinessManagementApi.Models;
 
 namespace BusinessManagementApi.Services;
 

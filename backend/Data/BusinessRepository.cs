@@ -1,6 +1,6 @@
 namespace BusinessManagementApi.Data;
 
-using BusinessManagementApi.Model;
+using BusinessManagementApi.Models;
 using Npgsql;
 
 public class BusinessRepository
