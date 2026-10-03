@@ -9,3 +9,6 @@ export { default as DashboardShell } from './DashboardShell';
 
 // Export ProductsView from product-page
 export { default as ProductsView } from './product-page/ProductsView'
+
+// Export SalesView from sales-page
+export { default as SalesView } from './sales-page/SalesView'

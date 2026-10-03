@@ -1,4 +1,4 @@
-using BusinessManagementApi.Model;
+using BusinessManagementApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using BusinessManagementApi.Data;
 
