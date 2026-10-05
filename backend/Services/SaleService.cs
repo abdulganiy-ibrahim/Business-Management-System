@@ -23,7 +23,7 @@ public class SaleService
 
     if (newSale.AmountPaid < 0)
     {
-        throw new ArgumentException("Amount paid cannot be negative.");
+      throw new ArgumentException("Amount paid cannot be negative.");
     }
 
     var saleItems = new List<AddSaleItemRecord>();

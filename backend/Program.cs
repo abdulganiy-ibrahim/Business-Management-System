@@ -15,6 +15,7 @@ builder.Services.AddScoped<UserRepository>(sp => new UserRepository(connectionSt
 builder.Services.AddScoped<BusinessRepository>(sp => new BusinessRepository(connectionString));
 builder.Services.AddScoped<ProductRepository>(sp => new ProductRepository(connectionString));
 builder.Services.AddScoped<SaleRepository>(sp => new SaleRepository(connectionString));
+builder.Services.AddScoped<DebitSaleRepository>(sp => new DebitSaleRepository(connectionString));
 
 // Register Services with the DI Container
 builder.Services.AddScoped<BusinessService>();

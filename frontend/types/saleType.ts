@@ -16,7 +16,7 @@ export interface Sale {
   customerName?: string;
   customerNumber?: string;
   totalAmount: number;
-  paidAmount: number;
+  amountPaid: number;
   createdAt: string;
 }
 

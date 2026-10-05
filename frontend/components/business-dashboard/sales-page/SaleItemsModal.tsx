@@ -108,7 +108,7 @@ export default function SaleItemsModal({
           <div className="flex justify-between gap-4">
             <dt className="text-muted">Paid</dt>
             <dd className="font-medium text-foreground">
-              {formatPrice(sale.paidAmount)}
+              {formatPrice(sale.amountPaid)}
             </dd>
           </div>
         </dl>

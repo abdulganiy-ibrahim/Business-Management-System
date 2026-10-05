@@ -111,8 +111,6 @@ id
 sale_id
 amount_due
 amount_paid
-status
-due_date
 created_at
 updated_at
 ```

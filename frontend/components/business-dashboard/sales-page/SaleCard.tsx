@@ -10,10 +10,10 @@ const statusStyles = {
 };
 
 function getPaymentStatus(sale: Sale) {
-  if (sale.paidAmount >= sale.totalAmount) {
+  if (sale.amountPaid >= sale.totalAmount) {
     return { label: "Paid", style: statusStyles.paid };
   }
-  if (sale.paidAmount > 0) {
+  if (sale.amountPaid > 0) {
     return { label: "Part paid", style: statusStyles.partPaid };
   }
   return { label: "Unpaid", style: statusStyles.unpaid };
@@ -26,7 +26,7 @@ type SaleCardProps = {
 
 export default function SaleCard({ sale, onViewItems }: SaleCardProps) {
   const status = getPaymentStatus(sale);
-  const balance = sale.totalAmount - sale.paidAmount;
+  const balance = sale.totalAmount - sale.amountPaid;
 
   return (
     <li className="flex flex-col gap-4 rounded-2xl border border-border bg-background p-4 sm:p-5">
@@ -65,7 +65,7 @@ export default function SaleCard({ sale, onViewItems }: SaleCardProps) {
         <div>
           <dt className="text-xs text-muted">Paid</dt>
           <dd className="mt-0.5 text-sm font-medium text-foreground">
-            {formatPrice(sale.paidAmount)}
+            {formatPrice(sale.amountPaid)}
           </dd>
         </div>
         {balance > 0 && (
