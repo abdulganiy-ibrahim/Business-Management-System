@@ -5,154 +5,127 @@ namespace BusinessManagementApi.Data;
 
 public class SaleRepository
 {
-  private readonly string _connectionString;
+  private readonly UnitOfWork _uow;
 
-  public SaleRepository(string connectionString)
+  public SaleRepository(UnitOfWork uow)
   {
-    _connectionString = connectionString;
+    _uow = uow;
   }
 
-  public async Task<int> CreateSaleWithItemsAsync(AddSaleRecord sale, IReadOnlyList<AddSaleItemRecord> items)
-  {
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-    await using var transaction = await conn.BeginTransactionAsync();
+  // ---------- Writes (join the active transaction, if there is one) ----------
 
-    var saleSql = @"
+  public async Task<int> AddSaleAsync(AddSaleRecord sale)
+  {
+    var sql = @"
       INSERT INTO sales (business_id, customer_name, customer_number, total_amount, amount_paid)
       VALUES (@businessId, @customerName, @customerNumber, @totalAmount, @amountPaid)
       RETURNING id;
     ";
 
-    int saleId;
-    await using (var saleCmd = new NpgsqlCommand(saleSql, conn, transaction))
-    {
-      saleCmd.Parameters.AddWithValue("@businessId", sale.BusinessId);
-      saleCmd.Parameters.AddWithValue("@customerName", sale.CustomerName ?? (object)DBNull.Value);
-      saleCmd.Parameters.AddWithValue("@customerNumber", sale.CustomerNumber ?? (object)DBNull.Value);
-      saleCmd.Parameters.AddWithValue("@totalAmount", sale.TotalAmount);
-      saleCmd.Parameters.AddWithValue("@amountPaid", sale.AmountPaid);
+    await using var cmd = _uow.CreateCommand(sql);
+    cmd.Parameters.AddWithValue("@businessId", sale.BusinessId);
+    cmd.Parameters.AddWithValue("@customerName", sale.CustomerName ?? (object)DBNull.Value);
+    cmd.Parameters.AddWithValue("@customerNumber", sale.CustomerNumber ?? (object)DBNull.Value);
+    cmd.Parameters.AddWithValue("@totalAmount", sale.TotalAmount);
+    cmd.Parameters.AddWithValue("@amountPaid", sale.AmountPaid);
 
-      saleId = Convert.ToInt32(await saleCmd.ExecuteScalarAsync());
-    }
+    return Convert.ToInt32(await cmd.ExecuteScalarAsync());
+  }
 
-    var itemSql = @"
+  public async Task AddSaleItemAsync(int saleId, AddSaleItemRecord item)
+  {
+    var sql = @"
       INSERT INTO sale_items (sale_id, product_id, quantity, unit_price, total_price)
       VALUES (@saleId, @productId, @quantity, @unitPrice, @totalPrice);
     ";
 
-    foreach (var item in items)
-    {
-      await using var itemCmd = new NpgsqlCommand(itemSql, conn, transaction);
-      itemCmd.Parameters.AddWithValue("@saleId", saleId);
-      itemCmd.Parameters.AddWithValue("@productId", item.ProductId);
-      itemCmd.Parameters.AddWithValue("@quantity", item.Quantity);
-      itemCmd.Parameters.AddWithValue("@unitPrice", item.UnitPrice);
-      itemCmd.Parameters.AddWithValue("@totalPrice", item.TotalPrice);
+    await using var cmd = _uow.CreateCommand(sql);
+    cmd.Parameters.AddWithValue("@saleId", saleId);
+    cmd.Parameters.AddWithValue("@productId", item.ProductId);
+    cmd.Parameters.AddWithValue("@quantity", item.Quantity);
+    cmd.Parameters.AddWithValue("@unitPrice", item.UnitPrice);
+    cmd.Parameters.AddWithValue("@totalPrice", item.TotalPrice);
 
-      await itemCmd.ExecuteNonQueryAsync();
-    }
-
-    await transaction.CommitAsync();
-    return saleId;
+    await cmd.ExecuteNonQueryAsync();
   }
 
-  // Get Sales by BusinessId Async Method.
+  // ---------- Reads ----------
+
   public async Task<List<SaleRecord>> GetSalesByBusinessIdAsync(Guid businessId)
   {
-    var sales = new List<SaleRecord>();
-
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-
-    var sqlCommand = @"
+    var sql = @"
       SELECT id, business_id, customer_name, customer_number, total_amount, amount_paid, created_at
       FROM sales
       WHERE business_id = @businessId;
     ";
 
-    await using var cmd = new NpgsqlCommand(sqlCommand, conn);
+    await using var cmd = _uow.CreateCommand(sql);
     cmd.Parameters.AddWithValue("@businessId", businessId);
 
+    var sales = new List<SaleRecord>();
     await using var reader = await cmd.ExecuteReaderAsync();
     while (await reader.ReadAsync())
     {
-      sales.Add(new SaleRecord(
-        reader.GetInt32(0),
-        reader.GetGuid(1),
-        reader.IsDBNull(2) ? null : reader.GetString(2),
-        reader.IsDBNull(3) ? null : reader.GetString(3),
-        reader.GetDecimal(4),
-        reader.GetDecimal(5),
-        reader.GetDateTime(6)
-      ));
+      sales.Add(MapSale(reader));
     }
 
     return sales;
   }
 
-  // Get Sale by SaleId Async Method.
   public async Task<SaleRecord?> GetSaleByIdAsync(int saleId)
   {
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-
-    var sqlCommand = @"
+    var sql = @"
       SELECT id, business_id, customer_name, customer_number, total_amount, amount_paid, created_at
       FROM sales
       WHERE id = @saleId;
     ";
 
-    await using var cmd = new NpgsqlCommand(sqlCommand, conn);
+    await using var cmd = _uow.CreateCommand(sql);
     cmd.Parameters.AddWithValue("@saleId", saleId);
 
     await using var reader = await cmd.ExecuteReaderAsync();
-    if (await reader.ReadAsync())
-    {
-      return new SaleRecord(
-        reader.GetInt32(0),
-        reader.GetGuid(1),
-        reader.IsDBNull(2) ? null : reader.GetString(2),
-        reader.IsDBNull(3) ? null : reader.GetString(3),
-        reader.GetDecimal(4),
-        reader.GetDecimal(5),
-        reader.GetDateTime(6)
-      );
-    }
-
-    return null;
+    return await reader.ReadAsync() ? MapSale(reader) : null;
   }
 
-  // Get Sale Items by SaleId Async Method.
   public async Task<List<SaleItem>> GetSaleItemsBySaleIdAsync(int saleId)
   {
-    var saleItems = new List<SaleItem>();
-
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-
-    var sqlCommand = @"
+    var sql = @"
       SELECT id, sale_id, product_id, quantity, unit_price, total_price
       FROM sale_items
       WHERE sale_id = @saleId;
     ";
 
-    await using var cmd = new NpgsqlCommand(sqlCommand, conn);
+    await using var cmd = _uow.CreateCommand(sql);
     cmd.Parameters.AddWithValue("@saleId", saleId);
 
+    var saleItems = new List<SaleItem>();
     await using var reader = await cmd.ExecuteReaderAsync();
     while (await reader.ReadAsync())
     {
-      saleItems.Add(new SaleItem(
-        reader.GetInt32(0),
-        reader.GetInt32(1),
-        reader.GetInt32(2),
-        reader.GetInt32(3),
-        reader.GetDecimal(4),
-        reader.GetDecimal(5)
-      ));
+      saleItems.Add(MapSaleItem(reader));
     }
 
     return saleItems;
   }
+
+  // ---------- Mapping helpers (one place to change if a column changes) ----------
+
+  private static SaleRecord MapSale(NpgsqlDataReader reader) => new(
+    reader.GetInt32(0),
+    reader.GetGuid(1),
+    reader.IsDBNull(2) ? null : reader.GetString(2),
+    reader.IsDBNull(3) ? null : reader.GetString(3),
+    reader.GetDecimal(4),
+    reader.GetDecimal(5),
+    reader.GetDateTime(6)
+  );
+
+  private static SaleItem MapSaleItem(NpgsqlDataReader reader) => new(
+    reader.GetInt32(0),
+    reader.GetInt32(1),
+    reader.GetInt32(2),
+    reader.GetInt32(3),
+    reader.GetDecimal(4),
+    reader.GetDecimal(5)
+  );
 }

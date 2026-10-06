@@ -5,20 +5,30 @@ namespace BusinessManagementApi.Services;
 
 public class SaleService
 {
+  private readonly UnitOfWork _uow;
   private readonly SaleRepository _saleRepository;
   private readonly ProductRepository _productRepository;
+  private readonly DebitSaleRepository _debitSaleRepository;
 
-  public SaleService(SaleRepository saleRepository, ProductRepository productRepository)
+  public SaleService(
+    UnitOfWork uow,
+    SaleRepository saleRepository,
+    ProductRepository productRepository,
+    DebitSaleRepository debitSaleRepository)
   {
-      _saleRepository = saleRepository;
-      _productRepository = productRepository;
-    }
+    _uow = uow;
+    _saleRepository = saleRepository;
+    _productRepository = productRepository;
+    _debitSaleRepository = debitSaleRepository;
+  }
 
   public async Task<int> CreateSaleAsync(Guid businessId, CreateSaleRequest newSale)
   {
+    // ---------- 1. Validate and calculate (no transaction yet) ----------
+
     if (newSale.SaleItems == null || newSale.SaleItems.Count == 0)
     {
-        throw new ArgumentException("Sale must contain at least one item.");
+      throw new ArgumentException("Sale must contain at least one item.");
     }
 
     if (newSale.AmountPaid < 0)
@@ -33,14 +43,14 @@ public class SaleService
     {
       if (item.Quantity <= 0)
       {
-          throw new ArgumentException($"Quantity for product {item.ProductId} must be greater than zero.");
+        throw new ArgumentException($"Quantity for product {item.ProductId} must be greater than zero.");
       }
 
       var product = _productRepository.GetById(item.ProductId);
 
       if (product == null || product.BusinessId != businessId)
       {
-          throw new ArgumentException($"Product {item.ProductId} is not found or does not belong to the specified business.");
+        throw new ArgumentException($"Product {item.ProductId} is not found or does not belong to the specified business.");
       }
 
       var totalPrice = product.SellingPrice * item.Quantity;
@@ -63,22 +73,47 @@ public class SaleService
       newSale.AmountPaid
     );
 
-    return await _saleRepository.CreateSaleWithItemsAsync(sale, saleItems);
+    var amountOwed = totalAmount - newSale.AmountPaid;
+
+    // ---------- 2. Save everything: all or nothing ----------
+
+    await _uow.BeginAsync();
+    try
+    {
+      var saleId = await _saleRepository.AddSaleAsync(sale);
+
+      foreach (var item in saleItems)
+      {
+        await _saleRepository.AddSaleItemAsync(saleId, item);
+      }
+
+      // The customer has not paid in full, so record the debit
+      if (amountOwed > 0)
+      {
+        var debit = new CreateDebitSaleRequest(saleId, amountOwed, newSale.AmountPaid);
+        await _debitSaleRepository.AddDebitAsync(debit);
+      }
+
+      await _uow.CommitAsync();
+      return saleId;
+    }
+    catch
+    {
+      await _uow.RollbackAsync(); // undo every step, then pass the error up
+      throw;
+    }
   }
 
-  // Get sales by businessId Async Method
   public async Task<List<SaleRecord>> GetSalesByBusinessIdAsync(Guid businessId)
   {
     return await _saleRepository.GetSalesByBusinessIdAsync(businessId);
   }
 
-  // Get sale by saleId async method
   public async Task<SaleRecord?> GetSaleByIdAsync(int saleId)
   {
     return await _saleRepository.GetSaleByIdAsync(saleId);
   }
 
-  // Get sale items by saleId async method
   public async Task<List<SaleItem>> GetSaleItemsBySaleIdAsync(int saleId)
   {
     return await _saleRepository.GetSaleItemsBySaleIdAsync(saleId);

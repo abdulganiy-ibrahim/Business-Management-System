@@ -5,61 +5,56 @@ namespace BusinessManagementApi.Data;
 
 public class DebitSaleRepository
 {
-  private readonly string _connectionString;
+  private readonly UnitOfWork _uow;
 
-  public DebitSaleRepository(string connectionString)
+  public DebitSaleRepository(UnitOfWork uow)
   {
-    _connectionString = connectionString;
+    _uow = uow;
   }
 
-  // Create a new debit record
+  // ---------- Write (joins the active transaction, if there is one) ----------
+
   public async Task<int> AddDebitAsync(CreateDebitSaleRequest newDebit)
   {
-    var query = @"
+    var sql = @"
       INSERT INTO debit_sales (sale_id, amount_due, amount_paid)
-      VALUES (@SaleId, @AmountDue, @AmountPaid)
+      VALUES (@saleId, @amountDue, @amountPaid)
       RETURNING id;
     ";
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
 
-    await using var cmd = new NpgsqlCommand(query, conn);
-    cmd.Parameters.AddWithValue("SaleId", newDebit.SaleId);
-    cmd.Parameters.AddWithValue("AmountDue", newDebit.AmountDue);
-    cmd.Parameters.AddWithValue("AmountPaid", newDebit.AmountPaid);
+    await using var cmd = _uow.CreateCommand(sql);
+    cmd.Parameters.AddWithValue("@saleId", newDebit.SaleId);
+    cmd.Parameters.AddWithValue("@amountDue", newDebit.AmountDue);
+    cmd.Parameters.AddWithValue("@amountPaid", newDebit.AmountPaid);
 
-    var newDebitId = (int)(await cmd.ExecuteScalarAsync())!;
-
-    return newDebitId;    
+    return Convert.ToInt32(await cmd.ExecuteScalarAsync());
   }
+
+  // ---------- Read ----------
 
   public async Task<DebitRecord?> GetBySaleIdAsync(int saleId)
   {
-    var query = @"
+    var sql = @"
       SELECT id, sale_id, amount_due, amount_paid, created_at, updated_at
       FROM debit_sales
-      WHERE sale_id = @SaleId;
+      WHERE sale_id = @saleId;
     ";
 
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-
-    await using var cmd = new NpgsqlCommand(query, conn);
-    cmd.Parameters.AddWithValue("SaleId", saleId);
+    await using var cmd = _uow.CreateCommand(sql);
+    cmd.Parameters.AddWithValue("@saleId", saleId);
 
     await using var reader = await cmd.ExecuteReaderAsync();
-    if (await reader.ReadAsync())
-    {
-      return new DebitRecord(
-        reader.GetInt32(0),
-        reader.GetInt32(1),
-        reader.GetDecimal(2),
-        reader.GetDecimal(3),
-        reader.GetDateTime(4),
-        reader.GetDateTime(5)
-      );
-    }
-
-    return null;
+    return await reader.ReadAsync() ? MapDebit(reader) : null;
   }
+
+  // ---------- Mapping helper ----------
+
+  private static DebitRecord MapDebit(NpgsqlDataReader reader) => new(
+    reader.GetInt32(0),
+    reader.GetInt32(1),
+    reader.GetDecimal(2),
+    reader.GetDecimal(3),
+    reader.GetDateTime(4),
+    reader.GetDateTime(5)
+  );
 }
