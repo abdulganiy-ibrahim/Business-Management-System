@@ -1,4 +1,4 @@
-import { secondaryButton } from "@/components/ui/uiStyles";
+import { primaryButton, secondaryButton } from "@/components/ui/uiStyles";
 import { formatDate, formatPrice } from "./format";
 import type { Sale } from "@/types/saleType";
 
@@ -9,8 +9,14 @@ const statusStyles = {
   unpaid: "bg-danger/10 text-danger",
 };
 
-function getPaymentStatus(sale: Sale) {
-  if (sale.amountPaid >= sale.totalAmount) {
+// What the customer still owes. Rounded to cents so decimal noise
+// (like 0.1 + 0.2) can never leave a fake debt on a fully paid sale.
+function getBalance(sale: Sale) {
+  return Math.round((sale.totalAmount - sale.amountPaid) * 100) / 100;
+}
+
+function getPaymentStatus(sale: Sale, balance: number) {
+  if (balance <= 0) {
     return { label: "Paid", style: statusStyles.paid };
   }
   if (sale.amountPaid > 0) {
@@ -22,11 +28,17 @@ function getPaymentStatus(sale: Sale) {
 type SaleCardProps = {
   sale: Sale;
   onViewItems: (sale: Sale) => void;
+  onPayDebt: (sale: Sale) => void;
 };
 
-export default function SaleCard({ sale, onViewItems }: SaleCardProps) {
-  const status = getPaymentStatus(sale);
-  const balance = sale.totalAmount - sale.amountPaid;
+export default function SaleCard({
+  sale,
+  onViewItems,
+  onPayDebt,
+}: SaleCardProps) {
+  const balance = getBalance(sale);
+  const status = getPaymentStatus(sale, balance);
+  const hasDebt = balance > 0;
 
   return (
     <li className="flex flex-col gap-4 rounded-2xl border border-border bg-background p-4 sm:p-5">
@@ -68,7 +80,7 @@ export default function SaleCard({ sale, onViewItems }: SaleCardProps) {
             {formatPrice(sale.amountPaid)}
           </dd>
         </div>
-        {balance > 0 && (
+        {hasDebt && (
           <div>
             <dt className="text-xs text-muted">Balance due</dt>
             <dd className="mt-0.5 text-sm font-medium text-danger">
@@ -78,13 +90,24 @@ export default function SaleCard({ sale, onViewItems }: SaleCardProps) {
         )}
       </dl>
 
-      <button
-        type="button"
-        onClick={() => onViewItems(sale)}
-        className={`${secondaryButton} w-full`}
-      >
-        View items
-      </button>
+      {/* Actions: "Pay debt" is disabled once the sale is fully paid */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={() => onViewItems(sale)}
+          className={secondaryButton}
+        >
+          View items
+        </button>
+        <button
+          type="button"
+          onClick={() => onPayDebt(sale)}
+          disabled={!hasDebt}
+          className={primaryButton}
+        >
+          Pay debt
+        </button>
+      </div>
     </li>
   );
 }

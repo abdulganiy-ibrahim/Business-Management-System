@@ -41,6 +41,10 @@ export default function SalesView({
 
   const hasProducts = products.length > 0;
 
+  const payDebt = (sale: Sale) => {
+    // TODO: implement paying debt for a sale
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* Page heading + new sale button */}
@@ -76,7 +80,7 @@ export default function SalesView({
       {sortedSales.length > 0 ? (
         <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
           {sortedSales.map((sale) => (
-            <SaleCard key={sale.id} sale={sale} onViewItems={setViewingSale} />
+            <SaleCard key={sale.id} sale={sale} onViewItems={setViewingSale} onPayDebt={payDebt} />
           ))}
         </ul>
       ) : (
