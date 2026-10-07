@@ -16,8 +16,6 @@ public class UserExistsMiddleware
 
     if (context.User.Identity?.IsAuthenticated == true)
     {
-      Console.WriteLine($"Middleware hit. IsAuthenticated: {context.User.Identity?.IsAuthenticated}");
-
       var userIdClaim = context.User.FindFirst("sub")?.Value;
 
       if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))

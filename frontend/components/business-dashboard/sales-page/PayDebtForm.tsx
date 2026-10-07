@@ -59,7 +59,7 @@ export default function PayDebtForm({
     setServerError("");
 
     try {
-      // Sends saleId and amountPaid. The backend does the rest.
+      // Sends saleId and amountPaid.
       const result = await payDebtAction(
         businessId,
         sale.id,

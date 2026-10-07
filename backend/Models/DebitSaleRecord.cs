@@ -14,3 +14,5 @@ public record DebitRecord(
   DateTime CreatedAt,
   DateTime UpdatedAt
 );
+
+public record PayDebtRequest(decimal Amount);

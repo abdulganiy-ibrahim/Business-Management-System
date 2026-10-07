@@ -38,11 +38,11 @@ export async function getSaleItemsAction(
 export async function payDebtAction(
   businessId: string,
   saleId: number,
-  amountPaid: number,
+  amount: number,
 ): Promise<ActionResult> {
   try {
     const api = await getServerApi();
-    await paySaleDebt(api, businessId, saleId, amountPaid);
+    await paySaleDebt(api, businessId, saleId, amount);
     return { success: true, data: undefined };
   } catch (error) {
     return { success: false, message: getErrorMessage(error) };

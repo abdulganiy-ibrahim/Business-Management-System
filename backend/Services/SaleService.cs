@@ -118,4 +118,48 @@ public class SaleService
   {
     return await _saleRepository.GetSaleItemsBySaleIdAsync(saleId);
   }
+
+  public async Task PayDebtAsync(Guid businessId, int saleId, decimal amount)
+  {
+    Console.WriteLine(amount);
+    if (amount <= 0)
+    {
+      throw new ArgumentException("Amount must be greater than zero.");
+    }
+
+    var sale = await _saleRepository.GetSaleByIdAsync(saleId);
+
+    // One message for "missing" and "belongs to someone else",
+    // so nobody can discover which sale ids exist
+    if (sale is null || sale.BusinessId != businessId)
+    {
+      throw new KeyNotFoundException("The sale does not exist.");
+    }
+
+    var debit = await _debitSaleRepository.GetBySaleIdAsync(saleId);
+
+    if (debit is null)
+    {
+      throw new KeyNotFoundException("There is no debit record for this sale.");
+    }
+
+    if (amount > debit.AmountDue)
+    {
+      throw new ArgumentException("Amount cannot be greater than the amount due.");
+    }
+
+    await _uow.BeginAsync();
+    try
+    {
+      await _debitSaleRepository.PayDebtAsync(saleId, amount);
+      await _saleRepository.PayDebtAsync(saleId, amount);
+
+      await _uow.CommitAsync();
+    }
+    catch
+    {
+      await _uow.RollbackAsync();
+      throw;
+    }
+  }
 }

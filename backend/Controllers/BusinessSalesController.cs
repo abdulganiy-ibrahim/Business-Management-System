@@ -12,10 +12,12 @@ namespace BusinessManagementSystem.Controllers;
 public class BusinessSalesController : ControllerBase
 {
   private readonly SaleService _saleService;
+  private readonly ILogger<BusinessSalesController> _logger;
 
-  public BusinessSalesController(SaleService saleService)
+  public BusinessSalesController(SaleService saleService, ILogger<BusinessSalesController> logger)
   {
     _saleService = saleService;
+    _logger = logger;
   }
 
   [HttpPost]
@@ -65,5 +67,30 @@ public class BusinessSalesController : ControllerBase
   {
     var saleItems = await _saleService.GetSaleItemsBySaleIdAsync(saleId);
     return Ok(saleItems);
+  }
+
+  [HttpPost("{saleId}/pay-debt")]
+  public async Task<IActionResult> PayDebt(int saleId, PayDebtRequest request)
+  {
+    var business = (BusinessRecord)HttpContext.Items["Business"]!;
+
+    try
+    {
+      await _saleService.PayDebtAsync(business.Id, saleId, request.Amount);
+      return NoContent();
+    }
+    catch (KeyNotFoundException ex)
+    {
+      return NotFound(new { message = ex.Message });
+    }
+    catch (ArgumentException ex)
+    {
+      return BadRequest(new { message = ex.Message });
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError(ex, "Failed to pay debt for sale {SaleId}", saleId);
+      return StatusCode(500, new { message = "Could not record the payment. Nothing was changed. Please try again." });
+    }
   }
 }

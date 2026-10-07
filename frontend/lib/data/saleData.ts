@@ -49,10 +49,10 @@ export async function paySaleDebt(
   api: AxiosInstance,
   businessId: string,
   saleId: number,
-  amountPaid: number
+  amount: number
 ) {
-  const res = await api.post(`/api/business/${businessId}/sales/${saleId}/payments`, {
-    amountPaid,
+  const res = await api.post(`/api/business/${businessId}/sales/${saleId}/pay-debt`, {
+    amount,
   });
 
   return res.data;

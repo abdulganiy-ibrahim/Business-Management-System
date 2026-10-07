@@ -12,8 +12,7 @@ public class DebitSaleRepository
     _uow = uow;
   }
 
-  // ---------- Write (joins the active transaction, if there is one) ----------
-
+  // Write (joins the active transaction, if there is one)
   public async Task<int> AddDebitAsync(CreateDebitSaleRequest newDebit)
   {
     var sql = @"
@@ -30,8 +29,28 @@ public class DebitSaleRepository
     return Convert.ToInt32(await cmd.ExecuteScalarAsync());
   }
 
-  // ---------- Read ----------
+  public async Task PayDebtAsync(int saleId, decimal amount)
+  {
+    var sql = @"
+      UPDATE debit_sales
+      SET amount_paid = amount_paid + @amount,
+          amount_due = amount_due - @amount,
+          updated_at = NOW()
+      WHERE sale_id = @saleId AND amount_due >= @amount;
+    ";
 
+    await using var cmd = _uow.CreateCommand(sql);
+    cmd.Parameters.AddWithValue("@saleId", saleId);
+    cmd.Parameters.AddWithValue("@amount", amount);
+
+    var rows = await cmd.ExecuteNonQueryAsync();
+    if (rows == 0)
+    {
+      throw new ArgumentException("Amount cannot be greater than the amount due.");
+    }
+  }
+
+  // Read 
   public async Task<DebitRecord?> GetBySaleIdAsync(int saleId)
   {
     var sql = @"
@@ -47,8 +66,9 @@ public class DebitSaleRepository
     return await reader.ReadAsync() ? MapDebit(reader) : null;
   }
 
-  // ---------- Mapping helper ----------
 
+
+  // Mapping helper
   private static DebitRecord MapDebit(NpgsqlDataReader reader) => new(
     reader.GetInt32(0),
     reader.GetInt32(1),

@@ -109,8 +109,26 @@ public class SaleRepository
     return saleItems;
   }
 
-  // Mapping helpers (one place to change if a column changes
+  public async Task PayDebtAsync(int saleId, decimal amount)
+  {
+    var sql = @"
+      UPDATE sales
+      SET amount_paid = amount_paid + @amount
+      WHERE id = @saleId;
+    ";
 
+    await using var cmd = _uow.CreateCommand(sql);
+    cmd.Parameters.AddWithValue("@saleId", saleId);
+    cmd.Parameters.AddWithValue("@amount", amount);
+
+    var rows = await cmd.ExecuteNonQueryAsync();
+    if (rows == 0)
+    {
+      throw new KeyNotFoundException("The sale does not exist.");
+    }
+  }
+
+  // Mapping helpers (one place to change if a column changes
   private static SaleRecord MapSale(NpgsqlDataReader reader) => new(
     reader.GetInt32(0),
     reader.GetGuid(1),
