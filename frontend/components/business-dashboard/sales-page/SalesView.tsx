@@ -8,6 +8,7 @@ import type { Sale } from "@/types/saleType";
 import CreateSaleForm from "./CreateSaleForm";
 import SaleCard from "./SaleCard";
 import SaleItemsModal from "./SaleItemsModal";
+import SalesTable from "./SalesTable";
 
 type SalesViewProps = {
   sales: Sale[];
@@ -41,8 +42,9 @@ export default function SalesView({
 
   const hasProducts = products.length > 0;
 
-  const payDebt = (sale: Sale) => {
-    // TODO: implement paying debt for a sale
+  const handlePayDebt = (sale: Sale) => {
+    // TODO: open the pay-debt modal for this sale (next step)
+    console.log("Pay debt for sale", sale.id);
   };
 
   return (
@@ -78,11 +80,26 @@ export default function SalesView({
 
       {/* List, or an empty message */}
       {sortedSales.length > 0 ? (
-        <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
-          {sortedSales.map((sale) => (
-            <SaleCard key={sale.id} sale={sale} onViewItems={setViewingSale} onPayDebt={payDebt} />
-          ))}
-        </ul>
+        <>
+          {/* Below lg: cards */}
+          <ul className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:hidden">
+            {sortedSales.map((sale) => (
+              <SaleCard
+                key={sale.id}
+                sale={sale}
+                onViewItems={setViewingSale}
+                onPayDebt={handlePayDebt}
+              />
+            ))}
+          </ul>
+
+          {/* lg and up: table (hides itself below lg) */}
+          <SalesTable
+            sales={sortedSales}
+            onViewItems={setViewingSale}
+            onPayDebt={handlePayDebt}
+          />
+        </>
       ) : (
         <p className="rounded-2xl border border-dashed border-border px-4 py-12 text-center text-sm text-muted">
           No sales yet. Record your first sale to see it here.

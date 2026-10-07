@@ -1,29 +1,8 @@
 import { primaryButton, secondaryButton } from "@/components/ui/uiStyles";
 import { formatDate, formatPrice } from "./format";
+import PaymentStatusBadge from "./PaymentStatusBadge";
+import { getBalance } from "./salePayment";
 import type { Sale } from "@/types/saleType";
-
-// Badge colors in one place. TODO: swap "Part paid" for your warning color token if you have one.
-const statusStyles = {
-  paid: "bg-primary/10 text-primary",
-  partPaid: "bg-amber-500/15 text-amber-700",
-  unpaid: "bg-danger/10 text-danger",
-};
-
-// What the customer still owes. Rounded to cents so decimal noise
-// (like 0.1 + 0.2) can never leave a fake debt on a fully paid sale.
-function getBalance(sale: Sale) {
-  return Math.round((sale.totalAmount - sale.amountPaid) * 100) / 100;
-}
-
-function getPaymentStatus(sale: Sale, balance: number) {
-  if (balance <= 0) {
-    return { label: "Paid", style: statusStyles.paid };
-  }
-  if (sale.amountPaid > 0) {
-    return { label: "Part paid", style: statusStyles.partPaid };
-  }
-  return { label: "Unpaid", style: statusStyles.unpaid };
-}
 
 type SaleCardProps = {
   sale: Sale;
@@ -31,13 +10,13 @@ type SaleCardProps = {
   onPayDebt: (sale: Sale) => void;
 };
 
+/** Mobile and tablet version of the sales list. Hidden from lg up, where SalesTable is used. */
 export default function SaleCard({
   sale,
   onViewItems,
   onPayDebt,
 }: SaleCardProps) {
   const balance = getBalance(sale);
-  const status = getPaymentStatus(sale, balance);
   const hasDebt = balance > 0;
 
   return (
@@ -59,11 +38,7 @@ export default function SaleCard({
           )}
         </div>
 
-        <span
-          className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${status.style}`}
-        >
-          {status.label}
-        </span>
+        <PaymentStatusBadge sale={sale} />
       </div>
 
       {/* Amounts (balance only shows when something is still owed) */}
@@ -95,7 +70,7 @@ export default function SaleCard({
         <button
           type="button"
           onClick={() => onViewItems(sale)}
-          className={secondaryButton}
+          className={`${secondaryButton} cursor-pointer`}
         >
           View items
         </button>
@@ -103,7 +78,7 @@ export default function SaleCard({
           type="button"
           onClick={() => onPayDebt(sale)}
           disabled={!hasDebt}
-          className={primaryButton}
+          className={`${primaryButton} cursor-pointer`}
         >
           Pay debt
         </button>
