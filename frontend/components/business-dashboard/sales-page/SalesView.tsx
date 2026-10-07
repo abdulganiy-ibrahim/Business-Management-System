@@ -9,6 +9,7 @@ import CreateSaleForm from "./CreateSaleForm";
 import PayDebtForm from "./PayDebtForm";
 import SaleCard from "./SaleCard";
 import SaleItemsModal from "./SaleItemsModal";
+import SalesStats from "./SalesStats";
 import SalesTable from "./SalesTable";
 
 type SalesViewProps = {
@@ -74,6 +75,8 @@ export default function SalesView({
           has.
         </p>
       )}
+
+      {sales.length > 0 && <SalesStats sales={sales} />}
 
       {/* List, or an empty message */}
       {sortedSales.length > 0 ? (
