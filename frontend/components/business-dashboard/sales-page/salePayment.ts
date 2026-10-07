@@ -24,3 +24,24 @@ export function getPaymentStatus(sale: Sale) {
   }
   return { label: "Unpaid", style: statusStyles.unpaid };
 }
+
+// Returns an error message, or undefined when the amount is fine.
+// A payment must be more than 0 and can't be more than what is still owed.
+export function validatePaymentAmount(
+  amount: string,
+  balance: number,
+): string | undefined {
+  if (amount.trim() === "") return "Enter the amount being paid.";
+
+  const value = Number(amount);
+  if (Number.isNaN(value) || value <= 0) {
+    return "Enter an amount greater than 0.";
+  }
+
+  // Compare in whole cents to avoid decimal rounding surprises
+  if (Math.round(value * 100) > Math.round(balance * 100)) {
+    return "Amount can't be more than the balance due.";
+  }
+
+  return undefined;
+}

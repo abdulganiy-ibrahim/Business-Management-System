@@ -43,3 +43,17 @@ export async function getSaleItemsBySaleId(
 
   return res.data;
 }
+
+// Pay part or all of the debt on a sale (sends saleId and amountPaid)
+export async function paySaleDebt(
+  api: AxiosInstance,
+  businessId: string,
+  saleId: number,
+  amountPaid: number
+) {
+  const res = await api.post(`/api/business/${businessId}/sales/${saleId}/payments`, {
+    amountPaid,
+  });
+
+  return res.data;
+}

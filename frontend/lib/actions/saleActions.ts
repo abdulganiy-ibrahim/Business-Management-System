@@ -1,13 +1,13 @@
 "use server";
 
-// Client components can't call your sale helpers directly: they need `api`,
-// which comes from getServerApi (server only). These actions run on the server,
-// build `api`, call the helper, and return a simple result.
-
 import { getServerApi } from "@/lib/api/serverApi";
-import { createSale, getSaleItemsBySaleId } from "@/lib/data/saleData";
+import {
+  createSale,
+  getSaleItemsBySaleId,
+  paySaleDebt,
+} from "@/lib/data/saleData";
 import type { CreateSaleRequest, SaleItem } from "@/types/saleType";
-import { getErrorMessage, type ActionResult } from "../../components/business-dashboard/sales-page/actionUtils";
+import { getErrorMessage, type ActionResult } from "./actionUtils";
 
 export async function createSaleAction(
   businessId: string,
@@ -30,6 +30,20 @@ export async function getSaleItemsAction(
     const api = await getServerApi();
     const items = await getSaleItemsBySaleId(api, businessId, saleId);
     return { success: true, data: items };
+  } catch (error) {
+    return { success: false, message: getErrorMessage(error) };
+  }
+}
+
+export async function payDebtAction(
+  businessId: string,
+  saleId: number,
+  amountPaid: number,
+): Promise<ActionResult> {
+  try {
+    const api = await getServerApi();
+    await paySaleDebt(api, businessId, saleId, amountPaid);
+    return { success: true, data: undefined };
   } catch (error) {
     return { success: false, message: getErrorMessage(error) };
   }

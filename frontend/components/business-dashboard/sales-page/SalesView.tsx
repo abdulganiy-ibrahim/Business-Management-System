@@ -6,6 +6,7 @@ import { primaryButton } from "@/components/ui/uiStyles";
 import type { Product } from "@/types/productType";
 import type { Sale } from "@/types/saleType";
 import CreateSaleForm from "./CreateSaleForm";
+import PayDebtForm from "./PayDebtForm";
 import SaleCard from "./SaleCard";
 import SaleItemsModal from "./SaleItemsModal";
 import SalesTable from "./SalesTable";
@@ -23,6 +24,7 @@ export default function SalesView({
 }: SalesViewProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [viewingSale, setViewingSale] = useState<Sale | null>(null);
+  const [payingSale, setPayingSale] = useState<Sale | null>(null);
 
   // Newest sale first (copy before sorting: .sort() changes the array it's called on)
   const sortedSales = useMemo(
@@ -41,11 +43,6 @@ export default function SalesView({
   );
 
   const hasProducts = products.length > 0;
-
-  const handlePayDebt = (sale: Sale) => {
-    // TODO: open the pay-debt modal for this sale (next step)
-    console.log("Pay debt for sale", sale.id);
-  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -88,7 +85,7 @@ export default function SalesView({
                 key={sale.id}
                 sale={sale}
                 onViewItems={setViewingSale}
-                onPayDebt={handlePayDebt}
+                onPayDebt={setPayingSale}
               />
             ))}
           </ul>
@@ -97,7 +94,7 @@ export default function SalesView({
           <SalesTable
             sales={sortedSales}
             onViewItems={setViewingSale}
-            onPayDebt={handlePayDebt}
+            onPayDebt={setPayingSale}
           />
         </>
       ) : (
@@ -112,6 +109,15 @@ export default function SalesView({
           businessId={businessId}
           products={products}
           onClose={() => setIsCreateOpen(false)}
+        />
+      )}
+
+      {payingSale && (
+        <PayDebtForm
+          key={payingSale.id}
+          businessId={businessId}
+          sale={payingSale}
+          onClose={() => setPayingSale(null)}
         />
       )}
 
