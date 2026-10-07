@@ -12,7 +12,7 @@ public class SaleRepository
     _uow = uow;
   }
 
-  // ---------- Writes (join the active transaction, if there is one) ----------
+  // Writes (join the active transaction, if there is one)
 
   public async Task<int> AddSaleAsync(AddSaleRecord sale)
   {
@@ -100,6 +100,7 @@ public class SaleRepository
 
     var saleItems = new List<SaleItem>();
     await using var reader = await cmd.ExecuteReaderAsync();
+    
     while (await reader.ReadAsync())
     {
       saleItems.Add(MapSaleItem(reader));
@@ -108,7 +109,7 @@ public class SaleRepository
     return saleItems;
   }
 
-  // ---------- Mapping helpers (one place to change if a column changes) ----------
+  // Mapping helpers (one place to change if a column changes
 
   private static SaleRecord MapSale(NpgsqlDataReader reader) => new(
     reader.GetInt32(0),

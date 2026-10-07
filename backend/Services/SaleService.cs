@@ -24,7 +24,7 @@ public class SaleService
 
   public async Task<int> CreateSaleAsync(Guid businessId, CreateSaleRequest newSale)
   {
-    // ---------- 1. Validate and calculate (no transaction yet) ----------
+    // 1. Validate and calculate
 
     if (newSale.SaleItems == null || newSale.SaleItems.Count == 0)
     {
@@ -75,7 +75,7 @@ public class SaleService
 
     var amountOwed = totalAmount - newSale.AmountPaid;
 
-    // ---------- 2. Save everything: all or nothing ----------
+    // Save everything: all or nothing.
 
     await _uow.BeginAsync();
     try
