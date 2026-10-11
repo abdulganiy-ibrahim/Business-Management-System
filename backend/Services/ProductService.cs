@@ -29,10 +29,10 @@ public class ProductService
     return products;
   }
 
-  public ProductRecord? GetById(int productId)
+  public async Task<ProductRecord?> GetById(int productId)
   {
 
-    var product = _productRepository.GetById(productId);
+    var product = await _productRepository.GetById(productId);
 
     return product;
   }

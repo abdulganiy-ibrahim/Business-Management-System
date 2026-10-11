@@ -36,9 +36,9 @@ public class BusinessProductController : ControllerBase
   }
 
   [HttpGet("{productId}")]
-  public IActionResult GetById(int productId)
+  public async Task<IActionResult> GetById(int productId)
   {
-    var product = _productService.GetById(productId);
+    var product = await _productService.GetById(productId);
     return Ok(product);
   }
 

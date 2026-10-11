@@ -8,17 +8,20 @@ public class SaleService
   private readonly UnitOfWork _uow;
   private readonly SaleRepository _saleRepository;
   private readonly ProductRepository _productRepository;
+  private readonly InventoryRepository _inventoryRepository;
   private readonly DebitSaleRepository _debitSaleRepository;
 
   public SaleService(
     UnitOfWork uow,
     SaleRepository saleRepository,
     ProductRepository productRepository,
+    InventoryRepository inventoryRepository,
     DebitSaleRepository debitSaleRepository)
   {
     _uow = uow;
     _saleRepository = saleRepository;
     _productRepository = productRepository;
+    _inventoryRepository = inventoryRepository;
     _debitSaleRepository = debitSaleRepository;
   }
 
@@ -46,7 +49,7 @@ public class SaleService
         throw new ArgumentException($"Quantity for product {item.ProductId} must be greater than zero.");
       }
 
-      var product = _productRepository.GetById(item.ProductId);
+      var product = await _productRepository.GetById(item.ProductId);
 
       if (product == null || product.BusinessId != businessId)
       {

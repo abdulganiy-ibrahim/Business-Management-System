@@ -89,31 +89,30 @@ public class ProductRepository
   }
 
   // Get product by Id
-  public ProductRecord? GetById(int id)
+  public async Task<ProductRecord?> GetById(int id)
   {
-    using var conn = new NpgsqlConnection(_connectionString);
-    conn.Open();
+    var sql = @"
+      SELECT
+        id,
+        business_id,
+        name,
+        sku,
+        cost_price,
+        selling_price,
+        created_at,
+        updated_at 
+      FROM products
+      WHERE id = @id
+    ";
 
-    using var cmd = new NpgsqlCommand(
-      """
-        SELECT
-          id,
-          business_id,
-          name,
-          sku,
-          cost_price,
-          selling_price,
-          created_at,
-          updated_at 
-        FROM products
-        WHERE id = @id
-      """,
-      conn
-    );
+    await using var conn = new NpgsqlConnection(_connectionString);
+    await conn.OpenAsync();
+
+    await using var cmd = new NpgsqlCommand(sql, conn);
 
     cmd.Parameters.AddWithValue("id", id);
 
-    using var reader = cmd.ExecuteReader();
+    using var reader = await cmd.ExecuteReaderAsync();
 
     if (reader.Read())
     {
