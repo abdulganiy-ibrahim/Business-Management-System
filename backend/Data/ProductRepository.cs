@@ -1,15 +1,14 @@
 using BusinessManagementApi.Models;
-using Npgsql;
 
 namespace BusinessManagementApi.Data;
 
 public class ProductRepository
 {
-  private readonly string _connectionString;
+  private readonly UnitOfWork _uow;
 
-  public ProductRepository(string connectionString)
+  public ProductRepository(UnitOfWork uow)
   {
-    _connectionString = connectionString;
+    _uow = uow;
   }
 
   // Create a product method
@@ -20,10 +19,8 @@ public class ProductRepository
       VALUES (@businessId, @name, @sku, @costPrice, @sellingPrice)
       RETURNING id
     ";
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
 
-    await using var cmd = new NpgsqlCommand(sql, conn);
+    await using var cmd = _uow.CreateCommand(sql);
 
     cmd.Parameters.AddWithValue("businessId", businessId);
     cmd.Parameters.AddWithValue("name", newProduct.Name);
@@ -52,22 +49,21 @@ public class ProductRepository
       ORDER BY created_at DESC
     ";
 
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-
-    await using var cmd = new NpgsqlCommand(sql, conn);
+    await using var cmd = _uow.CreateCommand(sql);
 
     cmd.Parameters.AddWithValue("businessId", businessId);
 
-    using var reader = await cmd.ExecuteReaderAsync();
+    await using var reader = await cmd.ExecuteReaderAsync();
 
-    while (reader.Read())
+    while (await reader.ReadAsync())
     {
       products.Add(new ProductRecord(
         reader.GetInt32(reader.GetOrdinal("id")),
         reader.GetGuid(reader.GetOrdinal("business_id")),
         reader.GetString(reader.GetOrdinal("name")),
-        reader.GetString(reader.GetOrdinal("sku")),
+        reader.IsDBNull(reader.GetOrdinal("sku"))
+          ? null
+          : reader.GetString(reader.GetOrdinal("sku")),
         reader.GetDecimal(reader.GetOrdinal("cost_price")),
         reader.GetDecimal(reader.GetOrdinal("selling_price")),
         reader.GetDateTime(reader.GetOrdinal("created_at")),
@@ -92,27 +88,26 @@ public class ProductRepository
         cost_price,
         selling_price,
         created_at,
-        updated_at 
+        updated_at
       FROM products
       WHERE id = @id
     ";
 
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-
-    await using var cmd = new NpgsqlCommand(sql, conn);
+    await using var cmd = _uow.CreateCommand(sql);
 
     cmd.Parameters.AddWithValue("id", id);
 
-    using var reader = await cmd.ExecuteReaderAsync();
+    await using var reader = await cmd.ExecuteReaderAsync();
 
-    if (reader.Read())
+    if (await reader.ReadAsync())
     {
       return new ProductRecord(
         reader.GetInt32(reader.GetOrdinal("id")),
         reader.GetGuid(reader.GetOrdinal("business_id")),
         reader.GetString(reader.GetOrdinal("name")),
-        reader.GetString(reader.GetOrdinal("sku")),
+        reader.IsDBNull(reader.GetOrdinal("sku"))
+          ? null
+          : reader.GetString(reader.GetOrdinal("sku")),
         reader.GetDecimal(reader.GetOrdinal("cost_price")),
         reader.GetDecimal(reader.GetOrdinal("selling_price")),
         reader.GetDateTime(reader.GetOrdinal("created_at")),
@@ -129,11 +124,8 @@ public class ProductRepository
   {
     var updates = new List<string>();
 
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-
-    await using var command = new NpgsqlCommand();
-    command.Connection = conn;
+    // The SQL is not ready yet, so we create the command empty and set CommandText later
+    await using var command = _uow.CreateCommand("");
 
     command.Parameters.AddWithValue("@id", productId);
 
@@ -174,21 +166,16 @@ public class ProductRepository
     return rowsAffected > 0;
   }
 
-  // Delete product by id;
-  public async Task DeleteByIdAsync(int id)
+  // Delete product by id
+  public async Task<bool> DeleteByIdAsync(int id)
   {
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
+    var sql = "DELETE FROM products WHERE id = @id";
 
-    await using var cmd = new NpgsqlCommand(
-      "DELETE FROM products WHERE id = @id",
-      conn
-    );
+    await using var cmd = _uow.CreateCommand(sql);
 
     cmd.Parameters.AddWithValue("id", id);
 
-    var rowAffected = await cmd.ExecuteNonQueryAsync();
-
-    return;
+    var rowsAffected = await cmd.ExecuteNonQueryAsync();
+    return rowsAffected > 0;
   }
 }

@@ -2,11 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import Modal from "@/components/ui/Modal";
-// TODO: match this import and the call below to your real helper
-import { createProduct } from "@/lib/data/productData";
+// TODO: if you already have your own create action/helper, use that instead.
+// The only requirement: it must send a CreateProduct (name, sku?, costPrice,
+// sellingPrice, quantity, lowStockThreshold).
+import { createProductAction } from "@/lib/actions/productActions";
 import ProductForm from "./ProductForm";
+import {
+  buildCreateProductPayload,
+  validateCreateProductForm,
+} from "@/utils/productFormUtils";
 import { useProductForm } from "./useProductForm";
-import { browserApi } from "@/lib/api/browserApi";
 
 type CreateProductFormProps = {
   businessId: string;
@@ -21,8 +26,12 @@ export default function CreateProductForm({
   const router = useRouter();
 
   const form = useProductForm({
+    validate: validateCreateProductForm, // product fields + stock fields
+    buildPayload: buildCreateProductPayload, // -> CreateProduct
     onSubmit: async (payload) => {
-      await createProduct(browserApi, businessId, payload); // talks to the server
+      const result = await createProductAction(businessId, payload); // talks to the server
+      if (!result.success) throw new Error(result.message); // shown inside the form
+
       router.refresh(); // reload the product list
       onClose();
     },
@@ -33,9 +42,14 @@ export default function CreateProductForm({
       isOpen
       onClose={onClose}
       title="Add product"
-      description="Enter the details of the product you sell."
+      description="Enter the product details and how much stock you have."
     >
-      <ProductForm form={form} submitLabel="Add product" onCancel={onClose} />
+      <ProductForm
+        form={form}
+        submitLabel="Add product"
+        showInventoryFields
+        onCancel={onClose}
+      />
     </Modal>
   );
 }

@@ -19,6 +19,7 @@ builder.Services.AddNpgsqlDataSource(connectionString);
 
 // Register Repositories with the DI container
 // Migrated to NpgsqlDataSource: no lambda needed
+builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<SaleRepository>();
 builder.Services.AddScoped<DebitSaleRepository>();
 builder.Services.AddScoped<InventoryRepository>();
@@ -28,7 +29,6 @@ builder.Services.AddScoped<InventoryTransactionRepository>();
 // When you migrate one, change it to: builder.Services.AddScoped<XRepository>();
 builder.Services.AddScoped<UserRepository>(sp => new UserRepository(connectionString));
 builder.Services.AddScoped<BusinessRepository>(sp => new BusinessRepository(connectionString));
-builder.Services.AddScoped<ProductRepository>(sp => new ProductRepository(connectionString));
 
 // Register Services with the DI container
 builder.Services.AddScoped<BusinessService>();

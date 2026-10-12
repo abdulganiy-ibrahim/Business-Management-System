@@ -1,6 +1,6 @@
 "use client";
 
-import type { HTMLInputTypeAttribute } from "react";
+import type { HTMLInputTypeAttribute, InputHTMLAttributes } from "react";
 import type { ProductFormState } from "./useProductForm";
 import { inputStyles, primaryButton, secondaryButton } from "./productStyles";
 
@@ -14,6 +14,9 @@ type TextFieldProps = {
   disabled?: boolean;
   placeholder?: string;
   type?: HTMLInputTypeAttribute;
+  // Number inputs default to decimals (for prices). Pass these for whole numbers.
+  inputMode?: InputHTMLAttributes<HTMLInputElement>["inputMode"];
+  step?: number | "any";
 };
 
 // One label + input + error message
@@ -27,6 +30,8 @@ function TextField({
   disabled,
   placeholder,
   type = "text",
+  inputMode,
+  step,
 }: TextFieldProps) {
   const isNumber = type === "number";
 
@@ -46,9 +51,9 @@ function TextField({
         onChange={(event) => onChange(event.target.value)}
         disabled={disabled}
         placeholder={placeholder}
-        inputMode={isNumber ? "decimal" : undefined}
+        inputMode={inputMode ?? (isNumber ? "decimal" : undefined)}
         min={isNumber ? 0 : undefined}
-        step={isNumber ? "any" : undefined}
+        step={step ?? (isNumber ? "any" : undefined)}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : undefined}
         className={`${inputStyles} ${error ? "border-danger" : "border-border"}`}
@@ -67,6 +72,8 @@ type ProductFormProps = {
   form: ProductFormState; // from useProductForm
   submitLabel: string;
   onCancel: () => void;
+  /** Show the stock fields (quantity and low stock threshold). Only when creating. */
+  showInventoryFields?: boolean;
 };
 
 /** The fields and buttons shared by CreateProductForm and EditProductForm. */
@@ -74,6 +81,7 @@ export default function ProductForm({
   form,
   submitLabel,
   onCancel,
+  showInventoryFields = false,
 }: ProductFormProps) {
   const { values, errors, serverError, isSubmitting, setValue, handleSubmit } =
     form;
@@ -124,6 +132,46 @@ export default function ProductForm({
           disabled={isSubmitting}
         />
       </div>
+
+      {/* Stock: only when creating. Editing stock happens on the Inventory page. */}
+      {showInventoryFields && (
+        <div className="flex flex-col gap-4 rounded-xl border border-border p-4">
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">Stock</h3>
+            <p className="mt-0.5 text-xs text-muted">
+              How many you have now. Stock at or below the low stock threshold
+              is marked as low.
+            </p>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <TextField
+              id="product-quantity"
+              label="Quantity in stock"
+              type="number"
+              inputMode="numeric"
+              step={1}
+              placeholder="0"
+              value={values.quantity}
+              onChange={(value) => setValue("quantity", value)}
+              error={errors.quantity}
+              disabled={isSubmitting}
+            />
+            <TextField
+              id="product-low-stock-threshold"
+              label="Low stock threshold"
+              type="number"
+              inputMode="numeric"
+              step={1}
+              placeholder="0"
+              value={values.lowStockThreshold}
+              onChange={(value) => setValue("lowStockThreshold", value)}
+              error={errors.lowStockThreshold}
+              disabled={isSubmitting}
+            />
+          </div>
+        </div>
+      )}
 
       {serverError && (
         <p

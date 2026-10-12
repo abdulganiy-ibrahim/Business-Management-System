@@ -3,6 +3,8 @@ export interface CreateProduct {
   sku?: string;
   costPrice: number;
   sellingPrice: number;
+  quantity: number;
+  lowStockThreshold: number;
 }
 
 export interface Product {

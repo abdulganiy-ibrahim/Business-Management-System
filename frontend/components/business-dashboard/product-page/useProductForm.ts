@@ -1,66 +1,42 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import {
+  emptyValues,
+  type ProductFormErrors,
+  type ProductFormValues,
+} from "@/utils/productFormUtils";
 
-// What the inputs hold (numbers stay as text while the user types)
-export type ProductFormValues = {
-  name: string;
-  sku: string;
-  costPrice: string;
-  sellingPrice: string;
-};
+// Re-exported so existing imports from this file keep working
+export type {
+  ProductFormErrors,
+  ProductFormValues,
+  ProductPayload,
+} from "@/utils/productFormUtils";
 
-// What gets sent to the server
-export type ProductPayload = {
-  name: string;
-  sku?: string;
-  costPrice: number;
-  sellingPrice: number;
-};
-
-export type ProductFormErrors = Partial<Record<keyof ProductFormValues, string>>;
-
-const emptyValues: ProductFormValues = {
-  name: "",
-  sku: "",
-  costPrice: "",
-  sellingPrice: "",
-};
-
-function validatePrice(value: string): string | undefined {
-  if (value.trim() === "") return "Enter a price.";
-
-  const price = Number(value);
-  if (Number.isNaN(price) || price < 0) return "Enter a valid price (0 or more).";
-
-  return undefined;
-}
-
-function validate(values: ProductFormValues): ProductFormErrors {
-  const errors: ProductFormErrors = {};
-
-  if (!values.name.trim()) errors.name = "Enter the product name.";
-
-  const costError = validatePrice(values.costPrice);
-  if (costError) errors.costPrice = costError;
-
-  const sellingError = validatePrice(values.sellingPrice);
-  if (sellingError) errors.sellingPrice = sellingError;
-
-  return errors;
-}
-
-type UseProductFormOptions = {
-  initialValues?: ProductFormValues;
+// TPayload is whatever the form sends: a ProductPayload when editing,
+// a CreateProduct when creating. It comes from the buildPayload you pass in.
+type UseProductFormOptions<TPayload> = {
+  /** Only the fields you want pre-filled (the rest start empty) */
+  initialValues?: Partial<ProductFormValues>;
+  /** Checks the values and returns an error message per field */
+  validate: (values: ProductFormValues) => ProductFormErrors;
+  /** Turns the typed text into what the backend expects */
+  buildPayload: (values: ProductFormValues) => TPayload;
   /** The form-specific server call. Throw an Error to show its message in the form. */
-  onSubmit: (payload: ProductPayload) => Promise<void>;
+  onSubmit: (payload: TPayload) => Promise<void>;
 };
 
-export function useProductForm({
-  initialValues = emptyValues,
+export function useProductForm<TPayload>({
+  initialValues,
+  validate,
+  buildPayload,
   onSubmit,
-}: UseProductFormOptions) {
-  const [values, setValues] = useState(initialValues);
+}: UseProductFormOptions<TPayload>) {
+  const [values, setValues] = useState<ProductFormValues>({
+    ...emptyValues,
+    ...initialValues,
+  });
   const [errors, setErrors] = useState<ProductFormErrors>({});
   const [serverError, setServerError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,12 +58,7 @@ export function useProductForm({
     setServerError("");
 
     try {
-      await onSubmit({
-        name: values.name.trim(),
-        sku: values.sku.trim() || undefined,
-        costPrice: Number(values.costPrice),
-        sellingPrice: Number(values.sellingPrice),
-      });
+      await onSubmit(buildPayload(values));
     } catch (error) {
       setServerError(
         error instanceof Error

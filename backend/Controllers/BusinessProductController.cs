@@ -18,11 +18,11 @@ public class BusinessProductController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<IActionResult> CreateAsync(CreateProductRecord newProduct)
+  public async Task<IActionResult> CreateAsync(CreateProductRequest request)
   {
     var business = (BusinessRecord)HttpContext.Items["Business"]!;
 
-    var productId = await _productService.CreateAsync(business.Id, newProduct);
+    var productId = await _productService.CreateAsync(business.Id, request);
     return Ok(productId);
   }
 
