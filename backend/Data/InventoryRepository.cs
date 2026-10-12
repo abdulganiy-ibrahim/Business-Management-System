@@ -1,16 +1,13 @@
 using BusinessManagementApi.Models;
-using Npgsql;
 
 namespace BusinessManagementApi.Data;
 
 public class InventoryRepository
 {
-  private readonly string _connectionString;
   private readonly UnitOfWork _uow;
 
-  public InventoryRepository(string connectionString, UnitOfWork uow)
+  public InventoryRepository(UnitOfWork uow)
   {
-    _connectionString = connectionString;
     _uow = uow;
   }
 
@@ -18,15 +15,12 @@ public class InventoryRepository
   public async Task<int> InsertAsync(CreateInventoryRecord newInventory)
   {
     var sql = @"
-      INSERT INTO inventories (business_id, product_id, quantity low_stock_threshold)
+      INSERT INTO inventories (business_id, product_id, quantity, low_stock_threshold)
       VALUES (@businessId, @productId, @quantity, @lowStockThreshold)
       RETURNING id
     ";
 
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-
-    await using var cmd = new NpgsqlCommand(sql, conn);
+    await using var cmd = _uow.CreateCommand(sql);
 
     cmd.Parameters.AddWithValue("businessId", newInventory.BusinessId);
     cmd.Parameters.AddWithValue("productId", newInventory.ProductId);
@@ -42,22 +36,19 @@ public class InventoryRepository
     var inventories = new List<InventoryRecord>();
 
     var sql = @"
-      SELECT 
+      SELECT
         id, business_id, product_id, quantity, low_stock_threshold, created_at, updated_at
       FROM inventories
       WHERE business_id = @businessId
     ";
 
-    await using var conn = new NpgsqlConnection(_connectionString);
-    await conn.OpenAsync();
-
-    await using var cmd = new NpgsqlCommand(sql, conn);
+    await using var cmd = _uow.CreateCommand(sql);
 
     cmd.Parameters.AddWithValue("businessId", businessId);
 
-    using var reader = await cmd.ExecuteReaderAsync();
+    await using var reader = await cmd.ExecuteReaderAsync();
 
-    while (reader.Read())
+    while (await reader.ReadAsync())
     {
       inventories.Add(new InventoryRecord(
         reader.GetInt32(0),
@@ -95,25 +86,26 @@ public class InventoryRepository
   }
 
   public async Task<bool> AddQuantityAsync(int inventoryId, Guid businessId, int quantity)
-{
-  var sql = @"
-    UPDATE inventories
-    SET quantity = quantity + @quantity,
-        updated_at = NOW()
-    WHERE id = @inventoryId
-      AND business_id = @businessId
-  ";
+  {
+    var sql = @"
+      UPDATE inventories
+      SET quantity = quantity + @quantity,
+          updated_at = NOW()
+      WHERE id = @inventoryId
+        AND business_id = @businessId
+    ";
 
-  await using var cmd = _uow.CreateCommand(sql);
-  cmd.Parameters.AddWithValue("quantity", quantity);
-  cmd.Parameters.AddWithValue("inventoryId", inventoryId);
-  cmd.Parameters.AddWithValue("businessId", businessId);
+    await using var cmd = _uow.CreateCommand(sql);
 
-  var rowsAffected = await cmd.ExecuteNonQueryAsync();
-  return rowsAffected > 0;
-}
+    cmd.Parameters.AddWithValue("quantity", quantity);
+    cmd.Parameters.AddWithValue("inventoryId", inventoryId);
+    cmd.Parameters.AddWithValue("businessId", businessId);
 
-public async Task<bool> UpdateLowStockThresholdAsync(int inventoryId, Guid businessId, int threshold)
+    var rowsAffected = await cmd.ExecuteNonQueryAsync();
+    return rowsAffected > 0;
+  }
+
+  public async Task<bool> UpdateLowStockThresholdAsync(int inventoryId, Guid businessId, int threshold)
   {
     var sql = @"
       UPDATE inventories
@@ -124,6 +116,7 @@ public async Task<bool> UpdateLowStockThresholdAsync(int inventoryId, Guid busin
     ";
 
     await using var cmd = _uow.CreateCommand(sql);
+
     cmd.Parameters.AddWithValue("threshold", threshold);
     cmd.Parameters.AddWithValue("inventoryId", inventoryId);
     cmd.Parameters.AddWithValue("businessId", businessId);
@@ -131,5 +124,4 @@ public async Task<bool> UpdateLowStockThresholdAsync(int inventoryId, Guid busin
     var rowsAffected = await cmd.ExecuteNonQueryAsync();
     return rowsAffected > 0;
   }
-
 }

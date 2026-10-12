@@ -4,12 +4,10 @@ namespace BusinessManagementApi.Data;
 
 public class InventoryTransactionRepository
 {
-  private readonly string _connectionString;
   private readonly UnitOfWork _uow;
 
-  public InventoryTransactionRepository(string connectionString, UnitOfWork uow)
+  public InventoryTransactionRepository(UnitOfWork uow)
   {
-    _connectionString = connectionString;
     _uow = uow;
   }
 

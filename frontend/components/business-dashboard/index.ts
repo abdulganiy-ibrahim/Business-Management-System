@@ -12,3 +12,6 @@ export { default as ProductsView } from './product-page/ProductsView'
 
 // Export SalesView from sales-page
 export { default as SalesView } from './sales-page/SalesView'
+
+// Exort InventoryView from inventory page
+export { default as InventoryView } from './inventory-page/InventoryView';

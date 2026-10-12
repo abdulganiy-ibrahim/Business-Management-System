@@ -21,8 +21,7 @@ builder.Services.AddNpgsqlDataSource(connectionString);
 // Migrated to NpgsqlDataSource: no lambda needed
 builder.Services.AddScoped<SaleRepository>();
 builder.Services.AddScoped<DebitSaleRepository>();
-builder.Services.AddScoped<InventoryRepository>(sp =>
-  new InventoryRepository(connectionString, sp.GetRequiredService<UnitOfWork>()));
+builder.Services.AddScoped<InventoryRepository>();
 builder.Services.AddScoped<InventoryTransactionRepository>();
 
 // Not migrated yet: still use the connection string
