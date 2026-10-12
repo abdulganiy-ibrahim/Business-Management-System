@@ -19,6 +19,7 @@ public class BusinessInventoryController : ControllerBase
     _inventoryService = inventoryService;
   }
 
+  [HttpPost]
   public async Task<IActionResult> CreateAsync(CreateInventoryRequest newInventoryReq)
   {
     var business = (BusinessRecord)HttpContext.Items["Business"]!;
@@ -33,6 +34,7 @@ public class BusinessInventoryController : ControllerBase
     }
   }
 
+  [HttpGet]
   public async Task<IActionResult> GetByBusinessIdAsync()
   {
     var business = (BusinessRecord)HttpContext.Items["Business"]!;
@@ -42,6 +44,7 @@ public class BusinessInventoryController : ControllerBase
     return Ok(inventories);
   }
 
+  [HttpPatch("{inventoryId}")]
   public async Task<IActionResult> UpdateAsync(UpdateInventoryRequest request)
   {
     var business = (BusinessRecord)HttpContext.Items["Business"]!;
