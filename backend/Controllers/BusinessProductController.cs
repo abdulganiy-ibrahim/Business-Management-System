@@ -18,35 +18,35 @@ public class BusinessProductController : ControllerBase
   }
 
   [HttpPost]
-  public IActionResult Create(CreateProductRecord newProduct)
+  public async Task<IActionResult> CreateAsync(CreateProductRecord newProduct)
   {
     var business = (BusinessRecord)HttpContext.Items["Business"]!;
 
-    var productId = _productService.Create(business.Id, newProduct);
+    var productId = await _productService.CreateAsync(business.Id, newProduct);
     return Ok(productId);
   }
 
   [HttpGet]
-  public IActionResult GetByBusinessId()
+  public async Task<IActionResult> GetByBusinessIdAsync()
   {
     var business = (BusinessRecord)HttpContext.Items["Business"]!;
 
-    var products = _productService.GetByBusinessId(business.Id);
+    var products = await _productService.GetByBusinessIdAsync(business.Id);
     return Ok(products); 
   }
 
   [HttpGet("{productId}")]
-  public async Task<IActionResult> GetById(int productId)
+  public async Task<IActionResult> GetByIdAsync(int productId)
   {
-    var product = await _productService.GetById(productId);
+    var product = await _productService.GetByIdAsync(productId);
     return Ok(product);
   }
 
   [HttpPatch("{productId}")]
   [Authorize]
-  public IActionResult Update(int productId, UpdateProductRecord request)
+  public async Task<IActionResult> UpdateAsync(int productId, UpdateProductRecord request)
   {
-    var updated = _productService.Update(productId, request);
+    var updated = await _productService.UpdateAsync(productId, request);
 
     if (!updated)
     {
@@ -60,9 +60,9 @@ public class BusinessProductController : ControllerBase
   }
 
   [HttpDelete("{productId}")]
-  public IActionResult DeleteById(int productId)
+  public async Task<IActionResult> DeleteByIdAsync(int productId)
   {
-    _productService.DeleteById(productId);
+    await _productService.DeleteByIdAsync(productId);
 
     return NoContent();
   }

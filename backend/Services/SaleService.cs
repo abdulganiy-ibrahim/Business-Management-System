@@ -49,7 +49,7 @@ public class SaleService
         throw new ArgumentException($"Quantity for product {item.ProductId} must be greater than zero.");
       }
 
-      var product = await _productRepository.GetById(item.ProductId);
+      var product = await _productRepository.GetByIdAsync(item.ProductId);
 
       if (product == null || product.BusinessId != businessId)
       {

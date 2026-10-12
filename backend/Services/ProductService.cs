@@ -15,38 +15,38 @@ public class ProductService
   }
 
   // Create product method
-  public int Create(Guid businessId, CreateProductRecord newProduct)
+  public async Task<int> CreateAsync(Guid businessId, CreateProductRecord newProduct)
   {
-    var productId = _productRepository.Create(businessId, newProduct);
+    var productId = await _productRepository.InsertAsync(businessId, newProduct);
 
     return productId;
   }
 
-  public List<ProductRecord> GetByBusinessId(Guid businessId)
+  public async Task<List<ProductRecord>> GetByBusinessIdAsync(Guid businessId)
   {
-    var products = _productRepository.GetByBusinessId(businessId);
+    var products = await _productRepository.GetByBusinessIdAsync(businessId);
 
     return products;
   }
 
-  public async Task<ProductRecord?> GetById(int productId)
+  public async Task<ProductRecord?> GetByIdAsync(int productId)
   {
 
-    var product = await _productRepository.GetById(productId);
+    var product = await _productRepository.GetByIdAsync(productId);
 
     return product;
   }
 
-  public bool Update(int productId, UpdateProductRecord request)
+  public async Task<bool> UpdateAsync(int productId, UpdateProductRecord request)
   {
 
-    return _productRepository.Update(productId, request);
+    return await _productRepository.UpdateAsync(productId, request);
   }
 
   // Delete by productId;
-  public void DeleteById(int productId)
+  public async Task DeleteByIdAsync(int productId)
   {
-    _productRepository.DeleteById(productId);
+    await _productRepository.DeleteByIdAsync(productId);
 
     return;
   }

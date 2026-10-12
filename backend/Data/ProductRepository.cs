@@ -13,19 +13,17 @@ public class ProductRepository
   }
 
   // Create a product method
-  public int Create(Guid businessId, CreateProductRecord newProduct)
+  public async Task<int> InsertAsync(Guid businessId, CreateProductRecord newProduct)
   {
-    using var conn = new NpgsqlConnection(_connectionString);
-    conn.Open();
-
-    using var cmd = new NpgsqlCommand(
-      """
+    var sql = @"
       INSERT INTO products(business_id, name, sku, cost_price, selling_price)
       VALUES (@businessId, @name, @sku, @costPrice, @sellingPrice)
       RETURNING id
-      """,
-      conn
-    );
+    ";
+    await using var conn = new NpgsqlConnection(_connectionString);
+    await conn.OpenAsync();
+
+    await using var cmd = new NpgsqlCommand(sql, conn);
 
     cmd.Parameters.AddWithValue("businessId", businessId);
     cmd.Parameters.AddWithValue("name", newProduct.Name);
@@ -36,38 +34,32 @@ public class ProductRepository
     cmd.Parameters.AddWithValue("costPrice", newProduct.CostPrice);
     cmd.Parameters.AddWithValue("sellingPrice", newProduct.SellingPrice);
 
-    return (int)cmd.ExecuteScalar()!;
+    var result = await cmd.ExecuteScalarAsync();
+
+    return Convert.ToInt32(result);
   }
 
   // Get product by Business Id
-  public List<ProductRecord> GetByBusinessId(Guid businessId)
+  public async Task<List<ProductRecord>> GetByBusinessIdAsync(Guid businessId)
   {
     var products = new List<ProductRecord>();
 
-    using var conn = new NpgsqlConnection(_connectionString);
-    conn.Open();
-
-    using var cmd = new NpgsqlCommand(
-      """
+    var sql = @"
       SELECT
-        id,
-        business_id,
-        name,
-        sku,
-        cost_price,
-        selling_price,
-        created_at,
-        updated_at
+        id, business_id, name, sku, cost_price, selling_price, created_at, updated_at
       FROM products
       WHERE business_id = @businessId
       ORDER BY created_at DESC
-      """,
-      conn
-    );
+    ";
+
+    await using var conn = new NpgsqlConnection(_connectionString);
+    await conn.OpenAsync();
+
+    await using var cmd = new NpgsqlCommand(sql, conn);
 
     cmd.Parameters.AddWithValue("businessId", businessId);
 
-    using var reader = cmd.ExecuteReader();
+    using var reader = await cmd.ExecuteReaderAsync();
 
     while (reader.Read())
     {
@@ -89,7 +81,7 @@ public class ProductRepository
   }
 
   // Get product by Id
-  public async Task<ProductRecord?> GetById(int id)
+  public async Task<ProductRecord?> GetByIdAsync(int id)
   {
     var sql = @"
       SELECT
@@ -133,14 +125,14 @@ public class ProductRepository
     return null;
   }
 
-  public bool Update(int productId, UpdateProductRecord request)
+  public async Task<bool> UpdateAsync(int productId, UpdateProductRecord request)
   {
     var updates = new List<string>();
 
-    using var conn = new NpgsqlConnection(_connectionString);
-    conn.Open();
+    await using var conn = new NpgsqlConnection(_connectionString);
+    await conn.OpenAsync();
 
-    using var command = new NpgsqlCommand();
+    await using var command = new NpgsqlCommand();
     command.Connection = conn;
 
     command.Parameters.AddWithValue("@id", productId);
@@ -178,24 +170,24 @@ public class ProductRepository
 
     command.CommandText = $"UPDATE products SET {string.Join(", ", updates)} WHERE id = @id";
 
-    var rowsAffected = command.ExecuteNonQuery();
+    var rowsAffected = await command.ExecuteNonQueryAsync();
     return rowsAffected > 0;
   }
 
   // Delete product by id;
-  public void DeleteById(int id)
+  public async Task DeleteByIdAsync(int id)
   {
-    using var conn = new NpgsqlConnection(_connectionString);
-    conn.Open();
+    await using var conn = new NpgsqlConnection(_connectionString);
+    await conn.OpenAsync();
 
-    using var cmd = new NpgsqlCommand(
+    await using var cmd = new NpgsqlCommand(
       "DELETE FROM products WHERE id = @id",
       conn
     );
 
     cmd.Parameters.AddWithValue("id", id);
 
-    var rowAffected = cmd.ExecuteNonQuery();
+    var rowAffected = await cmd.ExecuteNonQueryAsync();
 
     return;
   }

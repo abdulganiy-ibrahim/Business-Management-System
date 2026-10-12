@@ -2,13 +2,15 @@ namespace BusinessManagementApi.Models;
 
 public record CreateInventoryRequest(
   int ProductId,
-  int Quantity
+  int Quantity,
+  int LowStockThreshold
 );
 
 public record CreateInventoryRecord(
   Guid BusinessId,
   int ProductId,
-  int Quantity
+  int Quantity,
+  int LowStockThreshold
 );
 
 public record InventoryRecord(
@@ -16,11 +18,14 @@ public record InventoryRecord(
   Guid BusinessId,
   int ProductId,
   int Quantity,
+  int LowStockThreshold,
   DateTime CreatedAt,
   DateTime? UpdatedAt
 );
 
 public record UpdateInventoryRecord(
-  int ProductId,
-  int Quantity
+  Guid BusinessId,
+  int InventoryId,
+  int Quantity,
+  int LowStockThreshold
 );
