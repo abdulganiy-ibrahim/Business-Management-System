@@ -23,9 +23,14 @@ public record InventoryRecord(
   DateTime? UpdatedAt
 );
 
-public record UpdateInventoryRecord(
+public record DeductQuantityRequest(
   Guid BusinessId,
   int InventoryId,
-  int Quantity,
-  int LowStockThreshold
+  int Quantity
+);
+
+public record UpdateInventoryRequest(
+  int InventoryId,
+  int? AddQuantity,
+  int? LowStockThreshold
 );

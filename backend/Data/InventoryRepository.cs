@@ -6,10 +6,12 @@ namespace BusinessManagementApi.Data;
 public class InventoryRepository
 {
   private readonly string _connectionString;
+  private readonly UnitOfWork _uow;
 
-  public InventoryRepository(string connectionString)
+  public InventoryRepository(string connectionString, UnitOfWork uow)
   {
     _connectionString = connectionString;
+    _uow = uow;
   }
 
   // Insert Inventory to the database
@@ -71,26 +73,63 @@ public class InventoryRepository
     return inventories;
   }
 
-  // public async Task<bool> UpdateAsync(UpdateInventoryRecord updateInventory)
-  // {
-  //   var sql = @"
-  //     UPDATE inventories
-  //     SET quantity = @quantity,
-  //       updated_at = NOW()
-  //     WHERE id = @inventoryId
-  //       AND business_id = @businessId
-  //   ";
+  public async Task<bool> DeductQuantityAsync(DeductQuantityRequest newRequest)
+  {
+    var sql = @"
+      UPDATE inventories
+      SET quantity = quantity - @quantity,
+          updated_at = NOW()
+      WHERE id = @inventoryId
+        AND business_id = @businessId
+        AND quantity >= @quantity
+    ";
 
-  //   await using var conn = new NpgsqlConnection(_connectionString);
-  //   await conn.OpenAsync();
+    await using var cmd = _uow.CreateCommand(sql);
 
-  //   await using var cmd = new NpgsqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("quantity", newRequest.Quantity);
+    cmd.Parameters.AddWithValue("inventoryId", newRequest.InventoryId);
+    cmd.Parameters.AddWithValue("businessId", newRequest.BusinessId);
 
-  //   cmd.Parameters.AddWithValue("quantity", updateInventory.Quantity);
-  //   cmd.Parameters.AddWithValue("inventoryId", updateInventory.InventoryId);
-  //   cmd.Parameters.AddWithValue("businessId", updateInventory.BusinessId);
+    var rowsAffected = await cmd.ExecuteNonQueryAsync();
+    return rowsAffected > 0;
+  }
 
-  //   var rowsAffected = await cmd.ExecuteNonQueryAsync();
-  //   return rowsAffected > 0;
-  // }
+  public async Task<bool> AddQuantityAsync(int inventoryId, Guid businessId, int quantity)
+{
+  var sql = @"
+    UPDATE inventories
+    SET quantity = quantity + @quantity,
+        updated_at = NOW()
+    WHERE id = @inventoryId
+      AND business_id = @businessId
+  ";
+
+  await using var cmd = _uow.CreateCommand(sql);
+  cmd.Parameters.AddWithValue("quantity", quantity);
+  cmd.Parameters.AddWithValue("inventoryId", inventoryId);
+  cmd.Parameters.AddWithValue("businessId", businessId);
+
+  var rowsAffected = await cmd.ExecuteNonQueryAsync();
+  return rowsAffected > 0;
+}
+
+public async Task<bool> UpdateLowStockThresholdAsync(int inventoryId, Guid businessId, int threshold)
+  {
+    var sql = @"
+      UPDATE inventories
+      SET low_stock_threshold = @threshold,
+          updated_at = NOW()
+      WHERE id = @inventoryId
+        AND business_id = @businessId
+    ";
+
+    await using var cmd = _uow.CreateCommand(sql);
+    cmd.Parameters.AddWithValue("threshold", threshold);
+    cmd.Parameters.AddWithValue("inventoryId", inventoryId);
+    cmd.Parameters.AddWithValue("businessId", businessId);
+
+    var rowsAffected = await cmd.ExecuteNonQueryAsync();
+    return rowsAffected > 0;
+  }
+
 }
