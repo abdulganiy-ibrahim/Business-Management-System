@@ -24,8 +24,8 @@ public record InventoryRecord(
 );
 
 public record DeductQuantityRequest(
+  int ProductId,
   Guid BusinessId,
-  int InventoryId,
   int Quantity
 );
 

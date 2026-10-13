@@ -70,16 +70,16 @@ public class InventoryRepository
       UPDATE inventories
       SET quantity = quantity - @quantity,
           updated_at = NOW()
-      WHERE id = @inventoryId
+      WHERE product_id = @productId
         AND business_id = @businessId
         AND quantity >= @quantity
     ";
 
     await using var cmd = _uow.CreateCommand(sql);
 
-    cmd.Parameters.AddWithValue("quantity", newRequest.Quantity);
-    cmd.Parameters.AddWithValue("inventoryId", newRequest.InventoryId);
+    cmd.Parameters.AddWithValue("productId", newRequest.ProductId);
     cmd.Parameters.AddWithValue("businessId", newRequest.BusinessId);
+    cmd.Parameters.AddWithValue("quantity", newRequest.Quantity);
 
     var rowsAffected = await cmd.ExecuteNonQueryAsync();
     return rowsAffected > 0;

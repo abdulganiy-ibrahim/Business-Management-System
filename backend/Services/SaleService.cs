@@ -78,7 +78,7 @@ public class SaleService
 
     var amountOwed = totalAmount - newSale.AmountPaid;
 
-    // Save everything: all or nothing.
+    // 2. Save everything: all or nothing.
 
     await _uow.BeginAsync();
     try
@@ -88,6 +88,17 @@ public class SaleService
       foreach (var item in saleItems)
       {
         await _saleRepository.AddSaleItemAsync(saleId, item);
+
+        var deductQuantityRequest = new DeductQuantityRequest(item.ProductId, businessId, item.Quantity);
+
+        // Take the sold quantity out of this product's inventory
+        var deducted = await _inventoryRepository.DeductQuantityAsync(deductQuantityRequest);
+
+        if (!deducted)
+        {
+          throw new ArgumentException(
+            $"Not enough stock for product {item.ProductId}, or it has no inventory.");
+        }
       }
 
       // The customer has not paid in full, so record the debit
