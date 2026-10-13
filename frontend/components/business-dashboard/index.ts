@@ -15,3 +15,6 @@ export { default as SalesView } from './sales-page/SalesView'
 
 // Exort InventoryView from inventory page
 export { default as InventoryView } from './inventory-page/InventoryView';
+
+// Export Assistant View from ai-assistant
+export { default as AssistantView } from './ai-assistant/AssistantView';
