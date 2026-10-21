@@ -18,7 +18,7 @@ public class BusinessDashboardService
         _cache = cache;
     }
 
-    public async Task<BusinessDashboardStats> GetStatsAsync(Guid businessId)
+    public async Task<BusinessDashboardStats> GetDashboardStatsAsync(Guid businessId)
     {
         // Same business refreshing within 30 seconds = one database hit, not many
         var stats = await _cache.GetOrCreateAsync($"dashboard:{businessId}", async entry =>

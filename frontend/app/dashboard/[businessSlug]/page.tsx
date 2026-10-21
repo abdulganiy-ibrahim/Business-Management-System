@@ -1,44 +1,21 @@
-import { supabaseServerClient } from "@/lib/supabase/supabaseServer";
-import { redirect } from "next/navigation";
-import { getBusinessBySlug } from "@/lib/data/BusinessData";
-import { Business } from "@/types/BusinessType";
+import { notFound } from "next/navigation";
+import { DashboardOverview } from "@/components/business-dashboard";
 import { getServerApi } from "@/lib/api/serverApi";
+import { getBusinessBySlug } from "@/lib/data/BusinessData";
+import { getBusinessDashboardStats } from "@/lib/data/dashboardData";
 
-type ParamsProps = {
-  params: Promise<{
-    businessSlug: string;
-  }>
-}
+type DashboardPageProps = {
+  params: Promise<{ businessSlug: string }>;
+};
 
-export default async function BusinessDashboardPage({ params }: ParamsProps) {
-  const supabase = await supabaseServerClient();
-
-  const {data: { user }, error} = await supabase.auth.getUser();
-
-  if (error || !user){
-    redirect('/sign-up');
-  }
-
+export default async function DashboardPage({ params }: DashboardPageProps) {
   const { businessSlug } = await params;
   const api = await getServerApi();
 
-  let business: Business;
+  const business = await getBusinessBySlug(api, businessSlug);
+  if (!business) notFound();
 
-  try {
-    business = await getBusinessBySlug(api, businessSlug); 
-  } catch (error) {
-    console.log(error);
-    return;
-  }
+  const stats = await getBusinessDashboardStats(api, business.id);
 
-  console.log(business);
-
-
-  return (
-    <>
-      <h1>{business.slug}</h1>
-      <h1>{business.phoneNumber}</h1>
-    </>
-  )
-
+  return <DashboardOverview stats={stats} businessSlug={businessSlug} />;
 }

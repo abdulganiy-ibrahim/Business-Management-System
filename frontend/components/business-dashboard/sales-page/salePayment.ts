@@ -9,7 +9,7 @@ export function getBalance(sale: Sale) {
 }
 
 // Badge colors in one place. TODO: swap "Part paid" for your warning color token if you have one.
-const statusStyles = {
+export const statusStyles = {
   paid: "bg-primary/10 text-primary",
   partPaid: "bg-amber-500/15 text-amber-700",
   unpaid: "bg-danger/10 text-danger",

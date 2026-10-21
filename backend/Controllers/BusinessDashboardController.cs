@@ -15,12 +15,12 @@ public class BusinessDashboardController : ControllerBase
         _service = service;
     }
 
-    // Your middleware has already checked that this business exists and belongs to the user.
-    // Add the same [Authorize] attribute your other controllers use, if they have one.
     [HttpGet]
-    public async Task<ActionResult<BusinessDashboardStats>> Get(Guid businessId)
+    public async Task<ActionResult<BusinessDashboardStats>> GetDashboardStatsAsync()
     {
-        var stats = await _service.GetStatsAsync(businessId);
+        var business = (BusinessRecord)HttpContext.Items["Business"]!;
+
+        var stats = await _service.GetDashboardStatsAsync(business.Id);
         return Ok(stats);
     }
 }
