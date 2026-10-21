@@ -3,7 +3,6 @@ using Microsoft.IdentityModel.Tokens;
 using BusinessManagementApi.Data;
 using BusinessManagementApi.Services;
 using BusinessManagementApi.Middleware;
-using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +23,7 @@ builder.Services.AddScoped<SaleRepository>();
 builder.Services.AddScoped<DebitSaleRepository>();
 builder.Services.AddScoped<InventoryRepository>();
 builder.Services.AddScoped<InventoryTransactionRepository>();
+builder.Services.AddScoped<BusinessDashboardRepository>();
 
 // Not migrated yet: still use the connection string
 // When you migrate one, change it to: builder.Services.AddScoped<XRepository>();
@@ -36,9 +36,12 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<SaleService>();
 builder.Services.AddScoped<InventoryService>();
+builder.Services.AddScoped<BusinessDashboardService>();
 
 // Add services to the container
 builder.Services.AddControllers();
+
+builder.Services.AddMemoryCache();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
