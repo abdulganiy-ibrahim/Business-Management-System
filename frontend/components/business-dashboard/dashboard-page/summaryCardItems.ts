@@ -9,11 +9,11 @@ import { formatPrice } from "@/lib/format";
 import type { SummaryCards } from "@/types/dashboardType";
 
 type SummaryCardItem = {
-  key: keyof SummaryCards; // which card of the backend response this is
+  key: keyof SummaryCards;
   label: string;
   icon: IconType;
   formatValue: (value: number) => string;
-  higherIsBetter: boolean; // false = a rise is shown in red
+  higherIsBetter: boolean;
 };
 
 const formatCount = (value: number) => value.toLocaleString("en");

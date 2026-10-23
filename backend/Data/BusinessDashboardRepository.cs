@@ -138,7 +138,6 @@ public class BusinessDashboardRepository
     }
 
     // ---------- Top 5 best selling products (last 7 days, by units sold) ----------
-    // ASSUMES sale_items has: sale_id, product_id, quantity
     public async Task<List<TopProduct>> GetTopProductsAsync(Guid businessId, string tz)
     {
         var sql = "WITH " + Bounds + """
