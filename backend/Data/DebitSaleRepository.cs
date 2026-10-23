@@ -50,6 +50,24 @@ public class DebitSaleRepository
     }
   }
 
+  // create debit payment record 
+  public async Task<int> CreateDebitPaymentAsync(DebitPaymentRequest request)
+  {
+    var sql = @"
+      INSERT INTO debit_payments (debit_sale_id, business_id, amount_paid)
+      values (@debitSaleId, @businessId, @amountPaid)
+      RETURNING id
+    ";
+
+    await using var cmd = _uow.CreateCommand(sql);
+
+    cmd.Parameters.AddWithValue("debitSaleId", request.DebitSaleId);
+    cmd.Parameters.AddWithValue("businessId", request.BusinessId);
+    cmd.Parameters.AddWithValue("amountPaid", request.AmountPaid);
+
+    return Convert.ToInt32(await cmd.ExecuteScalarAsync());    
+  }
+
   // Read 
   public async Task<DebitRecord?> GetBySaleIdAsync(int saleId)
   {
