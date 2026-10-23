@@ -2,11 +2,11 @@ using BusinessManagementApi.Models;
 
 namespace BusinessManagementApi.Data;
 
-public class BusinessDashboardRepository
+public class DashboardRepository
 {
     private readonly UnitOfWork _uow;
 
-    public BusinessDashboardRepository(UnitOfWork uow)
+    public DashboardRepository(UnitOfWork uow)
     {
         _uow = uow;
     }
@@ -54,20 +54,34 @@ public class BusinessDashboardRepository
         );
     }
 
-    // ---------- Money out (debit): what customers still owe from sales made in the window ----------
+    // ---------- Money out (debit): what customers owe the business ----------
+    // Current  = all debts created minus all payments made, as of now
+    // Previous = the same calculation as of 7 days ago (start of the current window)
     public async Task<PeriodTotals> GetDebitTotalsAsync(Guid businessId, string tz)
     {
         var sql = "WITH " + Bounds + """
 
+            , debts AS (
+                SELECT
+                    COALESCE(SUM(d.amount_due), 0) AS total_now,
+                    COALESCE(SUM(d.amount_due) FILTER (WHERE d.created_at < b.cur_start), 0) AS total_before
+                FROM debit_sales d
+                JOIN sales s ON s.id = d.sale_id
+                CROSS JOIN bounds b
+                WHERE s.business_id = @businessId
+            ),
+            payments AS (
+                SELECT
+                    COALESCE(SUM(p.amount_paid), 0) AS total_now,
+                    COALESCE(SUM(p.amount_paid) FILTER (WHERE p.created_at < b.cur_start), 0) AS total_before
+                FROM debit_payments p
+                CROSS JOIN bounds b
+                WHERE p.business_id = @businessId
+            )
             SELECT
-                COALESCE(SUM(d.amount_due - d.amount_paid) FILTER (WHERE d.created_at >= b.cur_start), 0),
-                COALESCE(SUM(d.amount_due - d.amount_paid) FILTER (WHERE d.created_at <  b.cur_start), 0)
-            FROM debit_sales d
-            JOIN sales s ON s.id = d.sale_id
-            CROSS JOIN bounds b
-            WHERE s.business_id = @businessId
-              AND d.created_at >= b.prev_start
-              AND d.created_at <  b.cur_end
+                debts.total_now    - payments.total_now,
+                debts.total_before - payments.total_before
+            FROM debts, payments
             """;
 
         await using var cmd = _uow.CreateCommand(sql);
@@ -138,6 +152,7 @@ public class BusinessDashboardRepository
     }
 
     // ---------- Top 5 best selling products (last 7 days, by units sold) ----------
+    // ASSUMES sale_items has: sale_id, product_id, quantity
     public async Task<List<TopProduct>> GetTopProductsAsync(Guid businessId, string tz)
     {
         var sql = "WITH " + Bounds + """

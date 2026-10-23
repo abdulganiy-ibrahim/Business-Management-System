@@ -6,11 +6,11 @@ namespace BusinessManagementApi.Controllers;
 
 [ApiController]
 [Route("api/business/{businessId:guid}/dashboard")]
-public class BusinessDashboardController : ControllerBase
+public class DashboardController : ControllerBase
 {
-    private readonly BusinessDashboardService _service;
+    private readonly DashboardService _service;
 
-    public BusinessDashboardController(BusinessDashboardService service)
+    public DashboardController(DashboardService service)
     {
         _service = service;
     }

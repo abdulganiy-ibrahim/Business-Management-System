@@ -23,7 +23,7 @@ builder.Services.AddScoped<SaleRepository>();
 builder.Services.AddScoped<DebitSaleRepository>();
 builder.Services.AddScoped<InventoryRepository>();
 builder.Services.AddScoped<InventoryTransactionRepository>();
-builder.Services.AddScoped<BusinessDashboardRepository>();
+builder.Services.AddScoped<DashboardRepository>();
 
 // Not migrated yet: still use the connection string
 // When you migrate one, change it to: builder.Services.AddScoped<XRepository>();
@@ -36,7 +36,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<SaleService>();
 builder.Services.AddScoped<InventoryService>();
-builder.Services.AddScoped<BusinessDashboardService>();
+builder.Services.AddScoped<DashboardService>();
 
 // Add services to the container
 builder.Services.AddControllers();

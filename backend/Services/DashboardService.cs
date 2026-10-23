@@ -4,15 +4,15 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace BusinessManagementApi.Services;
 
-public class BusinessDashboardService
+public class DashboardService
 {
     // Later you can store a timezone on the businesses table and pass it in here instead
     private const string BusinessTimeZone = "Africa/Lagos";
 
-    private readonly BusinessDashboardRepository _repo;
+    private readonly DashboardRepository _repo;
     private readonly IMemoryCache _cache;
 
-    public BusinessDashboardService(BusinessDashboardRepository repo, IMemoryCache cache)
+    public DashboardService(DashboardRepository repo, IMemoryCache cache)
     {
         _repo = repo;
         _cache = cache;
