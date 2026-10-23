@@ -135,7 +135,6 @@ public class SaleService
 
   public async Task PayDebtAsync(Guid businessId, int saleId, decimal amount)
   {
-    Console.WriteLine(amount);
     if (amount <= 0)
     {
       throw new ArgumentException("Amount must be greater than zero.");
@@ -162,11 +161,17 @@ public class SaleService
       throw new ArgumentException("Amount cannot be greater than the amount due.");
     }
 
+    // new debit payment record data
+    var newDebitPayment = new DebitPaymentRequest(debit.Id, businessId, amount);
+
     await _uow.BeginAsync();
     try
     {
       await _debitSaleRepository.PayDebtAsync(saleId, amount);
       await _saleRepository.PayDebtAsync(saleId, amount);
+
+      // create debit payment record
+      await _debitSaleRepository.CreateDebitPaymentAsync(newDebitPayment);
 
       await _uow.CommitAsync();
     }
