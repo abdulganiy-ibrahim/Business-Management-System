@@ -114,7 +114,8 @@ public class SaleRepository
     var sql = @"
       UPDATE sales
       SET amount_paid = amount_paid + @amount
-      WHERE id = @saleId;
+      WHERE id = @saleId
+      AND amount_paid >= @amount
     ";
 
     await using var cmd = _uow.CreateCommand(sql);

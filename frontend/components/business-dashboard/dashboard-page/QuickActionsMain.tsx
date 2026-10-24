@@ -21,7 +21,7 @@ export default function QuickActions({
       className={className}
     >
       {/* 2 x 2 tiles */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         {quickActions.map(({ label, description, path, icon: Icon }) => {
           const content = (
             <>

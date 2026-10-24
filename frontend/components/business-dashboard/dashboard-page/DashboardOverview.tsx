@@ -34,7 +34,7 @@ export default function DashboardOverview({
         <TopProductsCard products={stats.topProducts} />
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-3">
+      <div className="grid gap-4 xl:grid-cols-3 lg:grid-cols-2">
         <RecentSalesCard
           orders={stats.recentOrders}
           businessSlug={businessSlug}

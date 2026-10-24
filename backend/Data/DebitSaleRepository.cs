@@ -34,7 +34,6 @@ public class DebitSaleRepository
     var sql = @"
       UPDATE debit_sales
       SET amount_paid = amount_paid + @amount,
-          amount_due = amount_due - @amount,
           updated_at = NOW()
       WHERE sale_id = @saleId AND amount_due >= @amount;
     ";

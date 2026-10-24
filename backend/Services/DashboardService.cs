@@ -6,7 +6,6 @@ namespace BusinessManagementApi.Services;
 
 public class DashboardService
 {
-    // Later you can store a timezone on the businesses table and pass it in here instead
     private const string BusinessTimeZone = "Africa/Lagos";
 
     private readonly DashboardRepository _repo;
@@ -32,8 +31,6 @@ public class DashboardService
 
     private async Task<BusinessDashboardStats> BuildAsync(Guid businessId)
     {
-        // Start all queries at once. They don't depend on each other,
-        // and with no transaction each one gets its own pooled connection.
         var salesTask    = _repo.GetSalesTotalsAsync(businessId, BusinessTimeZone);
         var debitTask    = _repo.GetDebitTotalsAsync(businessId, BusinessTimeZone);
         var productsTask = _repo.GetProductTotalsAsync(businessId, BusinessTimeZone);

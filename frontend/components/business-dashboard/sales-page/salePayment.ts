@@ -2,8 +2,6 @@ import type { Sale } from "@/types/saleType";
 
 // Shared by the card and the table, so both always agree.
 
-// What the customer still owes. Rounded to cents so decimal noise
-// (like 0.1 + 0.2) can never leave a fake debt on a fully paid sale.
 export function getBalance(sale: Sale) {
   return Math.round((sale.totalAmount - sale.amountPaid) * 100) / 100;
 }
