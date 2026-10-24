@@ -64,7 +64,7 @@ public class InventoryRepository
     return inventories;
   }
 
-  public async Task<bool> DeductQuantityAsync(DeductQuantityRequest newRequest)
+  public async Task<int?> DeductQuantityAsync(DeductQuantityRequest newRequest)
   {
     var sql = @"
       UPDATE inventories
@@ -73,6 +73,7 @@ public class InventoryRepository
       WHERE product_id = @productId
         AND business_id = @businessId
         AND quantity >= @quantity
+      RETURNING id
     ";
 
     await using var cmd = _uow.CreateCommand(sql);
@@ -81,8 +82,8 @@ public class InventoryRepository
     cmd.Parameters.AddWithValue("businessId", newRequest.BusinessId);
     cmd.Parameters.AddWithValue("quantity", newRequest.Quantity);
 
-    var rowsAffected = await cmd.ExecuteNonQueryAsync();
-    return rowsAffected > 0;
+    var result = await cmd.ExecuteScalarAsync();
+    return result is int inventoryId ? inventoryId : null;
   }
 
   public async Task<bool> AddQuantityAsync(int inventoryId, Guid businessId, int quantity)

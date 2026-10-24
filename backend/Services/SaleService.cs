@@ -9,6 +9,7 @@ public class SaleService
   private readonly SaleRepository _saleRepository;
   private readonly ProductRepository _productRepository;
   private readonly InventoryRepository _inventoryRepository;
+  private readonly InventoryTransactionRepository _inventoryTransactionRepo;
   private readonly DebitSaleRepository _debitSaleRepository;
 
   public SaleService(
@@ -16,12 +17,14 @@ public class SaleService
     SaleRepository saleRepository,
     ProductRepository productRepository,
     InventoryRepository inventoryRepository,
+    InventoryTransactionRepository inventoryTransactionRepository,
     DebitSaleRepository debitSaleRepository)
   {
     _uow = uow;
     _saleRepository = saleRepository;
     _productRepository = productRepository;
     _inventoryRepository = inventoryRepository;
+    _inventoryTransactionRepo = inventoryTransactionRepository;
     _debitSaleRepository = debitSaleRepository;
   }
 
@@ -92,13 +95,23 @@ public class SaleService
         var deductQuantityRequest = new DeductQuantityRequest(item.ProductId, businessId, item.Quantity);
 
         // Take the sold quantity out of this product's inventory
-        var deducted = await _inventoryRepository.DeductQuantityAsync(deductQuantityRequest);
+        var inventoryId = await _inventoryRepository.DeductQuantityAsync(deductQuantityRequest);
 
-        if (!deducted)
+        if (inventoryId is null)
         {
           throw new ArgumentException(
             $"Not enough stock for product {item.ProductId}, or it has no inventory.");
         }
+
+        var newInventoryTransaction = new CreateInventoryTransactionReq(
+          businessId,
+          inventoryId.Value,
+          InventoryTransactionTypes.Sale,
+          item.Quantity,
+          $"Sold #{item.Quantity} in available stock"
+        );
+
+        await _inventoryTransactionRepo.InsertAsync(newInventoryTransaction);
       }
 
       // The customer has not paid in full, so record the debit

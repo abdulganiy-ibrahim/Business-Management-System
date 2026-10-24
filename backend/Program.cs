@@ -37,6 +37,7 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<SaleService>();
 builder.Services.AddScoped<InventoryService>();
 builder.Services.AddScoped<DashboardService>();
+builder.Services.AddScoped<InventoryTransactionService>();
 
 // Add services to the container
 builder.Services.AddControllers();
