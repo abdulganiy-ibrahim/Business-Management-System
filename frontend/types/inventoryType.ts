@@ -19,7 +19,6 @@ export interface CreateInventoryRequest {
 // Matches UpdateInventoryRequest.
 // addQuantity is how many units to ADD to the stock, not the new total.
 export interface UpdateInventoryRequest {
-  inventoryId: number;
   addQuantity?: number;
   lowStockThreshold?: number;
 }

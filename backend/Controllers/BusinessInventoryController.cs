@@ -49,13 +49,13 @@ public class BusinessInventoryController : ControllerBase
   }
 
   [HttpPatch("{inventoryId}")]
-  public async Task<IActionResult> UpdateAsync(UpdateInventoryRequest request)
+  public async Task<IActionResult> UpdateAsync(int inventoryId, UpdateInventoryRequest request)
   {
     var business = (BusinessRecord)HttpContext.Items["Business"]!;
 
     try
     {
-      await _inventoryService.UpdateAsync(business.Id, request);
+      await _inventoryService.UpdateAsync(business.Id, inventoryId, request);
       return NoContent();
     } catch (ArgumentException ex)
     {

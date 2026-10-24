@@ -11,11 +11,12 @@ import { getErrorMessage, type ActionResult } from "./actionUtils";
 
 export async function updateInventoryAction(
   businessId: string,
+  inventoryId: number,
   update: UpdateInventoryRequest,
 ): Promise<ActionResult> {
   try {
     const api = await getServerApi();
-    await updateInventory(api, businessId, update);
+    await updateInventory(api, businessId, inventoryId, update);
     return { success: true, data: undefined };
   } catch (error) {
     return { success: false, message: getErrorMessage(error) };

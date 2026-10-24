@@ -46,7 +46,7 @@ public class InventoryService
     return inventories;
   }
 
-  public async Task UpdateAsync(Guid businessId, UpdateInventoryRequest request)
+  public async Task UpdateAsync(Guid businessId, int inventoryId, UpdateInventoryRequest request)
   {
     if (request.AddQuantity is null && request.LowStockThreshold is null)
       throw new ArgumentException("Nothing to update.");
@@ -64,14 +64,14 @@ public class InventoryService
       if (request.AddQuantity is not null)
       {
         var updated = await _inventoryRepository.AddQuantityAsync(
-          request.InventoryId, businessId, request.AddQuantity.Value);
+          inventoryId, businessId, request.AddQuantity.Value);
 
         if (!updated)
           throw new ArgumentException("Inventory not found.");
 
         var newInventoryTransaction = new CreateInventoryTransactionReq(
           businessId,
-          request.InventoryId,
+          inventoryId,
           InventoryTransactionTypes.Restock,
           request.AddQuantity.Value,
           $"Add {request.AddQuantity.Value} to stock"
@@ -83,14 +83,14 @@ public class InventoryService
       if (request.LowStockThreshold is not null)
       {
         var updated = await _inventoryRepository.UpdateLowStockThresholdAsync(
-          request.InventoryId, businessId, request.LowStockThreshold.Value);
+          inventoryId, businessId, request.LowStockThreshold.Value);
 
         if (!updated)
           throw new ArgumentException("Inventory not found.");
 
         await _inventoryTransactionRepository.InsertAsync(new CreateInventoryTransactionReq(
           businessId,
-          request.InventoryId,
+          inventoryId,
           InventoryTransactionTypes.ThresholdChange,
           0,
           $"Low stock threshold set to {request.LowStockThreshold.Value}"));

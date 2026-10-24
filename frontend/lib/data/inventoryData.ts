@@ -32,9 +32,10 @@ export async function getInventoryTransactionsByInventoryId(
 export async function updateInventory(
   api: AxiosInstance,
   businessId: string,
+  inventoryId: number,
   update: UpdateInventoryRequest
 ) {
-  const res = await api.put(`/api/business/${businessId}/inventory`, update);
+  const res = await api.patch(`/api/business/${businessId}/inventory/${inventoryId}`, update);
 
   return res.data;
 }

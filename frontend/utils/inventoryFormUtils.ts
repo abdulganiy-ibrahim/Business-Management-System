@@ -49,7 +49,6 @@ export function buildInventoryUpdate(
   if (addQuantity === 0 && !thresholdChanged) return null;
 
   return {
-    inventoryId: inventory.id,
     addQuantity: addQuantity > 0 ? addQuantity : undefined,
     lowStockThreshold: thresholdChanged ? threshold : undefined,
   };

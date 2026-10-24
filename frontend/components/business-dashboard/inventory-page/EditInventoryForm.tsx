@@ -74,7 +74,7 @@ export default function EditInventoryForm({
     setFormError("");
 
     try {
-      const result = await updateInventoryAction(businessId, update);
+      const result = await updateInventoryAction(businessId, inventory.id, update);
 
       if (!result.success) {
         setFormError(result.message);
@@ -83,9 +83,8 @@ export default function EditInventoryForm({
 
       router.refresh();
       onClose();
-    } catch (error) {
-      console.error("updateInventoryAction failed:", error);
-  setFormError("Could not send your changes. Please try again.");
+    } catch {
+      setFormError("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
