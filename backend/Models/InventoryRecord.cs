@@ -32,5 +32,7 @@ public record DeductQuantityRequest(
 public record UpdateInventoryRequest(
   int InventoryId,
   int? AddQuantity,
-  int? LowStockThreshold
+  int? LowStockThreshold,
+  string? TransactionType,
+  string? QuantityChange
 );
