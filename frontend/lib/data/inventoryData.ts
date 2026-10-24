@@ -34,7 +34,6 @@ export async function updateInventory(
   businessId: string,
   update: UpdateInventoryRequest
 ) {
-  // TODO: match this URL and method to your backend
   const res = await api.put(`/api/business/${businessId}/inventory`, update);
 
   return res.data;

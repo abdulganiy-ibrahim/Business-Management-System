@@ -13,10 +13,14 @@ namespace BusinessManagementApi.Controllers;
 public class BusinessInventoryController : ControllerBase
 {
   private readonly InventoryService _inventoryService;
+  private readonly InventoryTransactionService _inventoryTransactionService;
 
-  public BusinessInventoryController(InventoryService inventoryService)
+  public BusinessInventoryController(
+    InventoryService inventoryService,
+    InventoryTransactionService inventoryTransactionService)
   {
     _inventoryService = inventoryService;
+    _inventoryTransactionService = inventoryTransactionService;
   }
 
   [HttpPost]
@@ -58,4 +62,15 @@ public class BusinessInventoryController : ControllerBase
       return BadRequest(new { message = ex.Message });
     }
   }
+
+  [HttpGet("{inventoryId}/transactions")]
+  public async Task<IActionResult> GetInventoryTransactionByInventoryId(
+        int inventoryId,
+        CancellationToken cancellationToken = default)
+    {
+        var business = (BusinessRecord)HttpContext.Items["Business"]!;
+
+        var result = await _inventoryTransactionService.GetByInventoryIdAsync(inventoryId, business.Id, cancellationToken);
+        return Ok(result);
+    }
 }

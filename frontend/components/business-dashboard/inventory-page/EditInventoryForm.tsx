@@ -81,10 +81,11 @@ export default function EditInventoryForm({
         return;
       }
 
-      router.refresh(); // reload the inventory list
+      router.refresh();
       onClose();
-    } catch {
-      setFormError("Something went wrong. Please try again.");
+    } catch (error) {
+      console.error("updateInventoryAction failed:", error);
+  setFormError("Could not send your changes. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

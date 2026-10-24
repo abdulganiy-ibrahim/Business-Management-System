@@ -1,9 +1,5 @@
 "use server";
 
-// Client components can't call the inventory helpers directly: they need `api`,
-// which comes from getServerApi (server only). These actions run on the server,
-// build `api`, call the helper, and return a simple result.
-
 import { getServerApi } from "@/lib/api/serverApi";
 import {
   getInventoryTransactionsByInventoryId,

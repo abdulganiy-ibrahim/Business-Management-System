@@ -69,12 +69,15 @@ public class InventoryService
         if (!updated)
           throw new ArgumentException("Inventory not found.");
 
-        await _inventoryTransactionRepository.InsertAsync(new CreateInventoryTransactionReq(
+        var newInventoryTransaction = new CreateInventoryTransactionReq(
           businessId,
           request.InventoryId,
           InventoryTransactionTypes.Restock,
           request.AddQuantity.Value,
-          null));
+          $"Add {request.AddQuantity.Value} to stock"
+        );
+
+        await _inventoryTransactionRepository.InsertAsync(newInventoryTransaction);
       }
 
       if (request.LowStockThreshold is not null)
