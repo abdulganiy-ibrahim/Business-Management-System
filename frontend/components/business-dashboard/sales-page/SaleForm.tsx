@@ -1,5 +1,6 @@
 "use client";
 
+import SlowRequestNotice from "@/components/network/SlowRequestNotice";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import SelectField from "@/components/ui/SelectField";
 import TextField from "@/components/ui/TextField";
@@ -9,7 +10,7 @@ import {
   primaryButton,
   secondaryButton,
 } from "@/components/ui/uiStyles";
-import { formatPrice } from "./format";
+import { formatPrice } from "@/lib/format";
 import type { Product } from "@/types/productType";
 import { calculateRowTotal } from "@/utils/saleFormUtils";
 import type { SaleFormState } from "@/hooks/useSaleForm";
@@ -179,7 +180,7 @@ export default function SaleForm({ form, products, onCancel }: SaleFormProps) {
               <button
                 type="button"
                 onClick={payInFull}
-                className={`rounded-md font-medium text-primary cursor-pointer hover:underline ${focusRing}`}
+                className={`rounded-md font-medium text-primary hover:underline ${focusRing}`}
               >
                 Paid in full
               </button>
@@ -206,20 +207,23 @@ export default function SaleForm({ form, products, onCancel }: SaleFormProps) {
         </p>
       )}
 
+      <SlowRequestNotice isPending={isSubmitting} />
+
+
       {/* Primary button on top on mobile, on the right from sm up */}
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
-          className={`${secondaryButton} w-full sm:w-auto cursor-pointer`}
+          className={`${secondaryButton} w-full sm:w-auto`}
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`${primaryButton} w-full sm:w-auto cursor-pointer`}
+          className={`${primaryButton} w-full sm:w-auto`}
         >
           {isSubmitting ? "Saving..." : "Create sale"}
         </button>

@@ -1,5 +1,6 @@
 "use client";
 
+import { getNetworkErrorMessage } from "@/lib/network/networkMessages";
 import { useMemo, useState, type FormEvent } from "react";
 import type { Product } from "@/types/productType";
 import type { CreateSaleRequest } from "@/types/saleType";
@@ -99,9 +100,10 @@ export function useSaleForm({ products, onSubmit }: UseSaleFormOptions) {
       await onSubmit(buildSalePayload({ ...customer, rows, paidAmount }));
     } catch (error) {
       setServerError(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong. Please try again.",
+        getNetworkErrorMessage(error) ??
+          (error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again."),
       );
     } finally {
       setIsSubmitting(false);

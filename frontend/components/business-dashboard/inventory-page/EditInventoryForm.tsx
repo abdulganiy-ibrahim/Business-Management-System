@@ -1,5 +1,7 @@
 "use client";
 
+import { getNetworkErrorMessage } from "@/lib/network/networkMessages";
+import SlowRequestNotice from "@/components/network/SlowRequestNotice";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/ui/Modal";
@@ -81,10 +83,12 @@ export default function EditInventoryForm({
         return;
       }
 
-      router.refresh();
+      router.refresh(); // reload the inventory list
       onClose();
-    } catch {
-      setFormError("Something went wrong. Please try again.");
+    } catch (error) {
+      setFormError(
+        getNetworkErrorMessage(error) ?? "Something went wrong. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -161,6 +165,9 @@ export default function EditInventoryForm({
             {formError}
           </p>
         )}
+
+        <SlowRequestNotice isPending={isSubmitting} />
+
 
         {/* Primary button on top on mobile, on the right from sm up */}
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">

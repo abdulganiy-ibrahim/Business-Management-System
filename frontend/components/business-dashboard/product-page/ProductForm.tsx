@@ -1,5 +1,6 @@
 "use client";
 
+import SlowRequestNotice from "@/components/network/SlowRequestNotice";
 import type { HTMLInputTypeAttribute, InputHTMLAttributes } from "react";
 import type { ProductFormState } from "./useProductForm";
 import { inputStyles, primaryButton, secondaryButton } from "./productStyles";
@@ -181,6 +182,9 @@ export default function ProductForm({
           {serverError}
         </p>
       )}
+
+      <SlowRequestNotice isPending={isSubmitting} />
+
 
       {/* Primary button on top on mobile, on the right from sm up */}
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">

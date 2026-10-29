@@ -1,5 +1,4 @@
 import { AuthForm } from "@/components/authentication";
-import AuthNotice from "@/components/authentication/AuthNotice";
 
 type AuthPageProps = {
   searchParams: Promise<{
@@ -8,14 +7,11 @@ type AuthPageProps = {
 }
 
 export async function AuthPage({ searchParams }: AuthPageProps) {
-
   const { message } = await searchParams;
 
   return (
     <main>
-      <AuthNotice code={message} />
-
-      <AuthForm />
+      <AuthForm message={message}/>
     </main>
   )
 }

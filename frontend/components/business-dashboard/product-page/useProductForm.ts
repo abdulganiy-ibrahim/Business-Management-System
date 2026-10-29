@@ -1,5 +1,6 @@
 "use client";
 
+import { getNetworkErrorMessage } from "@/lib/network/networkMessages";
 import { useState, type FormEvent } from "react";
 import {
   emptyValues,
@@ -61,9 +62,10 @@ export function useProductForm<TPayload>({
       await onSubmit(buildPayload(values));
     } catch (error) {
       setServerError(
-        error instanceof Error
-          ? error.message
-          : "Something went wrong. Please try again.",
+        getNetworkErrorMessage(error) ??
+          (error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again."),
       );
     } finally {
       setIsSubmitting(false);

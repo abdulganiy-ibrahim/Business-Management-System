@@ -1,5 +1,6 @@
 "use client";
 
+import NetworkBanner from "../network/NetworkBanner";
 import type { ReactNode } from "react";
 import Header from "./header/Header";
 import Sidebar from "./sidebar/Sidebar";
@@ -35,6 +36,8 @@ export default function DashboardShell({
 
   return (
     <>
+      <NetworkBanner />
+      
       <Sidebar
         businessSlug={activeBusiness.slug}
         isCollapsed={sidebar.isCollapsed}

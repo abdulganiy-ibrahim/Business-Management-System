@@ -1,11 +1,17 @@
 'use client';
 
+import AuthNotice from './AuthNotice';
 import { useState } from 'react';
 import SignUpForm from './SignUpForm';
 import SignInForm from './SignInForm';
 import { UserRound } from 'lucide-react';
 
 type Tab = 'signup' | 'login';
+
+type AuthFormProps = {
+  /** The reason code from the URL (?message=...), set by the proxy. See authMessages.ts. */
+  message?: string;
+};
 
 const PANEL_COPY: Record<Tab, { heading: string; body: string }> = {
   signup: {
@@ -18,8 +24,11 @@ const PANEL_COPY: Record<Tab, { heading: string; body: string }> = {
   },
 };
 
-export default function AuthForm() {
-  const [activeTab, setActiveTab] = useState<Tab>('signup');
+export default function AuthForm({ message }: AuthFormProps) {
+  // Someone whose session expired already has an account, so open on Log In
+  const [activeTab, setActiveTab] = useState<Tab>(
+    message === 'session-expired' ? 'login' : 'signup',
+  );
 
   const handleTabSwitch = (tab: Tab) => {
     setActiveTab(tab);
@@ -73,6 +82,9 @@ export default function AuthForm() {
       {/* Form panel */}
       <div className="flex items-center justify-center min-h-screen lg:min-h-0 px-6 py-12">
         <div className="w-full max-w-sm">
+          {/* Inside the form panel, so it shows on mobile too and doesn't become a grid cell */}
+          <AuthNotice code={message} className="mb-6" />
+
           <div className="relative flex items-center w-full rounded-full bg-background-card border border-border p-1 mb-8">
             {/* Sliding pill — sits behind buttons */}
             <div

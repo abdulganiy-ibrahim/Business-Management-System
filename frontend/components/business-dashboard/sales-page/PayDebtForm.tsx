@@ -1,5 +1,7 @@
 "use client";
 
+import { getNetworkErrorMessage } from "@/lib/network/networkMessages";
+import SlowRequestNotice from "@/components/network/SlowRequestNotice";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/ui/Modal";
@@ -59,7 +61,7 @@ export default function PayDebtForm({
     setServerError("");
 
     try {
-      // Sends saleId and amountPaid.
+      // Sends saleId and amountPaid. The backend does the rest.
       const result = await payDebtAction(
         businessId,
         sale.id,
@@ -73,8 +75,10 @@ export default function PayDebtForm({
 
       router.refresh(); // reload the sales list
       onClose();
-    } catch {
-      setServerError("Something went wrong. Please try again.");
+    } catch (error) {
+      setServerError(
+        getNetworkErrorMessage(error) ?? "Something went wrong. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -152,20 +156,23 @@ export default function PayDebtForm({
           </p>
         )}
 
+        <SlowRequestNotice isPending={isSubmitting} />
+
+
         {/* Primary button on top on mobile, on the right from sm up */}
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className={`${secondaryButton} w-full sm:w-auto cursor-pointer`}
+            className={`${secondaryButton} w-full sm:w-auto`}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`${primaryButton} w-full sm:w-auto cursor-pointer`}
+            className={`${primaryButton} w-full sm:w-auto`}
           >
             {isSubmitting ? "Saving..." : "Record payment"}
           </button>
