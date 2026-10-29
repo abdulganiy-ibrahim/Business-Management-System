@@ -16,5 +16,8 @@ export { default as SalesView } from './sales-page/SalesView'
 // Exort InventoryView from inventory page
 export { default as InventoryView } from './inventory-page/InventoryView';
 
-// Export Dashboard Overview from dashboard page
+// Export Dashboard overview from dashboard page
 export { default as DashboardOverview } from './dashboard-page/DashboardOverview';
+
+// Export Assistant View from ai-assistant
+export { default as AssistantView } from './ai-assistant/AssistantView'
