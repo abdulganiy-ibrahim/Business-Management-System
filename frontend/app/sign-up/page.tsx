@@ -6,7 +6,7 @@ type AuthPageProps = {
   }>
 }
 
-export async function AuthPage({ searchParams }: AuthPageProps) {
+export default async function AuthPage({ searchParams }: AuthPageProps) {
   const { message } = await searchParams;
 
   return (
