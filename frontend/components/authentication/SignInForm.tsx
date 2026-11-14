@@ -95,7 +95,7 @@ export default function SignInForm() {
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
 
-          <p>Forgot your password? <button type='button' onClick={() => router.push('/forgot-password')} className="text-primary hover:underline">Reset it</button></p>
+          <p>Forgot your password? <button type='button' onClick={() => router.push('/reset-password')} className="text-primary hover:underline">Reset it</button></p>
         </div>
 
         <div className='mx-auto w-full mt-2'>
