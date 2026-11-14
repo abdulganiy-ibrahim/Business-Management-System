@@ -1,9 +1,9 @@
-
+import { UpdatePasswordForm } from "@/components/authentication";
 
 export default function UpdatePasswordPage() {
   return (
-    <main>
-      <h1>Update Password Page</h1>
+    <main className="flex min-h-screen items-center justify-center px-6 py-12">
+      <UpdatePasswordForm />
     </main>
-  )
+  );
 }

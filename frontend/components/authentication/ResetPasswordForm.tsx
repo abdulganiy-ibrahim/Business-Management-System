@@ -8,14 +8,7 @@ import { SIGN_UP_PATH } from '@/lib/auth/authRoutes';
 import { requestPasswordReset } from './requestPasswordReset';
 import { getNetworkErrorMessage } from '@/lib/network/networkMessages';
 import { validateEmail } from '@/utils/authValidation';
-
-// Class strings in one place. Swap them for the ones your sign-in form uses if you prefer.
-const focusRing =
-  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary';
-const inputClass = `h-11 w-full rounded-xl border bg-background-card px-3.5 text-sm text-foreground transition-colors placeholder:text-text-secondary/70 disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-primary`;
-const primaryButtonClass = `flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 ${focusRing}`;
-const iconBadgeClass =
-  'mb-6 flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary';
+import { focusRing, iconBadgeClass, inputClass, primaryButtonClass } from './authStyles';
 
 /** Two screens in one: the email form, and the "check your email" confirmation. */
 export default function ResetPasswordForm() {
